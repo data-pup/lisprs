@@ -8,6 +8,7 @@ pub fn get_tokens(input: &str) -> Vec<String> {
 #[cfg(test)]
 mod lex_tests {
     use lex;
+    use regex;
 
     #[test]
     fn get_tokens_should_split_by_whitespace() {
@@ -21,5 +22,13 @@ mod lex_tests {
             String::from(")"),
         ];
         assert_eq!(result, expected);
+    }
+
+    fn identify_parens() {
+        let r = regex::Regex::new(r"[()]").unwrap();
+        let a = "(";
+        let b = "a";
+        assert!(r.is_match(a));
+        assert_eq!(r.is_match(b), false);
     }
 }
