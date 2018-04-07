@@ -1,3 +1,11 @@
+use regex::Regex;
+
+lazy_static! {
+    static ref VAR_TOKEN:  Regex = Regex::new(r"[A-Za-z]").unwrap();
+    static ref PAREN_CHAR: Regex = Regex::new(r"[()]").unwrap();
+    static ref OP_CHAR:    Regex = Regex::new(r"[+\-*/]").unwrap();
+}
+
 pub fn get_tokens(input: &str) -> Vec<String> {
     let raw_input = input.to_string();
     raw_input.split_whitespace()
@@ -24,11 +32,24 @@ mod lex_tests {
         assert_eq!(result, expected);
     }
 
+    #[test]
     fn identify_parens() {
-        let r = regex::Regex::new(r"[()]").unwrap();
-        let a = "(";
-        let b = "a";
-        assert!(r.is_match(a));
-        assert_eq!(r.is_match(b), false);
+        for curr in ["(", ")"].into_iter() {
+            let is_match = lex::PAREN_CHAR.is_match(curr);
+            assert_eq!(is_match, true, "Did not correctly match: {}", curr);
+        }
+
+        for curr in ["a", "[", "1"].into_iter() {
+            let is_match = lex::PAREN_CHAR.is_match(curr);
+            assert_eq!(is_match, false, "Incorrectly matched: {}", curr);
+        }
+    }
+
+    #[test]
+    fn identify_ops() {
+        for curr in ["+", "-", "*", "/",].into_iter() {
+            let is_match = lex::OP_CHAR.is_match(curr);
+            assert_eq!(is_match, true, "Did not correctly match: {}", curr);
+        }
     }
 }
