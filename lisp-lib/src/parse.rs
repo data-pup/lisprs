@@ -1,3 +1,3 @@
-pub fn parse(_tokens: Vec<&str>) -> &str {
+pub fn parse(_tokens: Vec<String>) -> &'static str {
     "2"
 }
