@@ -10,6 +10,7 @@ enum _ParseError {
     MissingOpenParen,
 }
 
+// Parse a vector of tokens, evaluate the expression, and return the result.
 pub fn parse(mut tokens: Vec<String>) -> String {
     let _expr_end = tokens.pop();
     let mut token_iter = tokens.into_iter();
