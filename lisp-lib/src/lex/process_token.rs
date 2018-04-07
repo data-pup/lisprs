@@ -12,7 +12,30 @@ pub fn process_raw_token(token: String) -> Vec<String> {
 }
 
 #[cfg(test)]
-mod token_tests {
+mod raw_token_processing_tests {
+    use lex::process_token;
+
+    #[test]
+    fn basic_tokens_should_be_returned_identically() {
+        for input in ["hello", "+", "(", "0"].into_iter() {
+            let input_s = input.to_string();
+            let expected = vec![input_s.clone()];
+            let result = process_token::process_raw_token(input_s.clone());
+            assert_eq!(result, expected, "Incorrectly split: {}", input_s);
+        }
+    }
+
+    #[test]
+    fn token_with_paren_and_op_should_be_split() {
+        let input = String::from("(+");
+        let result = process_token::process_raw_token(input);
+        let expected = vec![String::from("("), String::from("+")];
+        assert_eq!(result, expected, "Did not split parentheses with operator.");
+    }
+}
+
+#[cfg(test)]
+mod regex_tests {
     use lex::process_token;
     use regex;
 
