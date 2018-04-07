@@ -1,3 +1,3 @@
-pub fn hello() -> &'static str {
-    "Hello World"
+pub fn get_result(_input: &str) -> &str {
+    unimplemented!();
 }

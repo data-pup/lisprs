@@ -2,11 +2,13 @@ extern crate lisp_lib;
 
 #[cfg(test)]
 mod tests {
-    use lisp_lib::hello;
+    use lisp_lib;
 
     #[test]
-    fn it_works() {
-        let s = hello();
-        assert_eq!(s, "Hello World");
+    fn get_result() {
+        let input = "(+ 1 1)";
+        let result = lisp_lib::get_result(input);
+        let expected = "2";
+        assert_eq!(result, expected);
     }
 }
