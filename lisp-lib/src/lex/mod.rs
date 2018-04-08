@@ -1,5 +1,5 @@
-
 mod process_token;
+mod token_regex;
 
 pub fn get_tokens(input: &str) -> Vec<String> {
     let raw_input = input.to_string();
