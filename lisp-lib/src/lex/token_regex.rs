@@ -8,9 +8,9 @@ lazy_static! {
 }
 
 // Helper functions to determine the contents of a token.
-pub fn is_variable(token: &String) -> bool { VAR_TOKEN.is_match(token) }
-pub fn is_value(token: &String)    -> bool { VAL_TOKEN.is_match(token) }
-pub fn is_syntax(token: &String)   -> bool {
+pub fn is_variable_token(token: &String) -> bool { VAR_TOKEN.is_match(token) }
+pub fn is_value_token(token: &String)    -> bool { VAL_TOKEN.is_match(token) }
+pub fn is_syntax_char(token: &String)   -> bool {
     PAREN_CHAR.is_match(token) || OP_CHAR.is_match(token)
 }
 
