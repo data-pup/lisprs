@@ -1,3 +1,5 @@
+use std::iter::FromIterator;
+
 use regex::Regex;
 
 lazy_static! {
@@ -21,10 +23,24 @@ pub fn process_raw_token(token: String) -> Vec<String> {
           || is_value(&t)     // value token, or syntactivally relevant.
           || is_syntax(&t) => vec![token.clone()],
         t => { // Otherwise, process the components of the token.
-            // let mut split_indices: Vec<usize> = Vec::new();
-            // for (i, c) in t.char_indices() {
-
-            unimplemented!()
+            let mut tokens: Vec<String> = vec![];
+            let mut curr_token: Vec<char> = vec![];
+            for curr_s in t.chars() {
+                match curr_s {
+                    c if is_syntax(&c.to_string()) => {
+                        if !&curr_token.is_empty() {
+                            tokens.push(String::from_iter(curr_token));
+                            curr_token = vec![];
+                        }
+                        tokens.push(curr_s.to_string())
+                    },
+                    _ => curr_token.push(curr_s),
+                }
+            }
+            if !&curr_token.is_empty() {
+                tokens.push(String::from_iter(curr_token));
+            }
+            tokens
         }
     }
 }
