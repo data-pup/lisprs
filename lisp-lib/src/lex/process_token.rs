@@ -25,22 +25,24 @@ pub fn process_raw_token(token: String) -> Vec<String> {
         t => { // Otherwise, process the components of the token.
             let mut tokens: Vec<String> = vec![];
             let mut curr_token: Vec<char> = vec![];
-            for curr_s in t.chars() {
-                match curr_s {
+            for curr_c in t.chars() {
+                match curr_c {
                     c if is_syntax(&c.to_string()) => {
                         if !&curr_token.is_empty() {
                             tokens.push(String::from_iter(curr_token));
                             curr_token = vec![];
                         }
-                        tokens.push(curr_s.to_string())
+                        tokens.push(curr_c.to_string())
                     },
-                    _ => curr_token.push(curr_s),
+                    _ => curr_token.push(curr_c),
                 }
             }
-            if !&curr_token.is_empty() {
-                tokens.push(String::from_iter(curr_token));
-            }
-            tokens
+            // if !&curr_token.is_empty() {
+            //     tokens.push(String::from_iter(curr_token));
+            // }
+            // tokens
+
+            unimplemented!();
         }
     }
 }
@@ -64,6 +66,14 @@ mod raw_token_processing_tests {
         let input = String::from("(+");
         let result = process_token::process_raw_token(input);
         let expected = vec![String::from("("), String::from("+")];
+        assert_eq!(result, expected, "Did not split parentheses with operator.");
+    }
+
+    #[test]
+    fn value_wrapped_in_parens_should_be_split() {
+        let input = String::from("(1)");
+        let result = process_token::process_raw_token(input);
+        let expected = vec![String::from("("), String::from("1"), String::from(")")];
         assert_eq!(result, expected, "Did not split parentheses with operator.");
     }
 }
@@ -128,11 +138,5 @@ mod regex_tests {
             let is_match = process_token::VAL_TOKEN.is_match(curr);
             assert_eq!(is_match, true, "Did not correctly match: {}", curr);
         }
-    }
-
-    #[test]
-    fn matching_a_char() {
-        let c = '(';
-        assert!(process_token::PAREN_CHAR.is_match(&c.to_string()));
     }
 }
