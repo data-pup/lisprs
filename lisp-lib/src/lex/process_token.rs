@@ -3,8 +3,8 @@ use std::iter::FromIterator;
 use regex::Regex;
 
 lazy_static! {
-    static ref VAR_TOKEN:  Regex = Regex::new(r"[A-Za-z]").unwrap();
-    static ref VAL_TOKEN:  Regex = Regex::new(r"[0-9]").unwrap();
+    static ref VAR_TOKEN:  Regex = Regex::new(r"^[A-Za-z]+$").unwrap();
+    static ref VAL_TOKEN:  Regex = Regex::new(r"^[0-9]+$").unwrap();
     static ref PAREN_CHAR: Regex = Regex::new(r"^[()]$").unwrap();
     static ref OP_CHAR:    Regex = Regex::new(r"^[+\-*/]$").unwrap();
 }
@@ -37,12 +37,8 @@ pub fn process_raw_token(token: String) -> Vec<String> {
                     _ => curr_token.push(curr_c),
                 }
             }
-            // if !&curr_token.is_empty() {
-            //     tokens.push(String::from_iter(curr_token));
-            // }
-            // tokens
-
-            unimplemented!();
+            if !&curr_token.is_empty() { tokens.push(String::from_iter(curr_token)); }
+            return tokens;
         }
     }
 }
@@ -126,7 +122,7 @@ mod regex_tests {
             assert_eq!(is_match, true, "Did not correctly match: {}", curr);
         }
 
-        for curr in ["1", "10", "+", "_"].into_iter() {
+        for curr in ["1", "10", "+", "_", "(", "(hello", "hello)"].into_iter() {
             let is_match = process_token::VAR_TOKEN.is_match(curr);
             assert_eq!(is_match, false, "Incorrectly matched: {}", curr);
         }
