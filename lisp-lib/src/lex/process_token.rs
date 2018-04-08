@@ -8,15 +8,19 @@ lazy_static! {
 }
 
 // Helper functions to determine the contents of a token.
-pub fn is_variable(token: &String) -> bool { VAR_TOKEN.is_match(token) }
-pub fn is_value(token: &String) -> bool { VAL_TOKEN.is_match(token) }
+fn is_variable(token: &String) -> bool { VAR_TOKEN.is_match(token) }
+fn is_value(token: &String)    -> bool { VAL_TOKEN.is_match(token) }
+fn is_syntax(token: &String)   -> bool {
+    PAREN_CHAR.is_match(token) || OP_CHAR.is_match(token)
+}
 
 /// Split a raw token into its syntactically meaningful components.
 pub fn process_raw_token(token: String) -> Vec<String> {
     match &token {
         s if is_variable(&s) => vec![token.clone()],
         s if is_value(&s)    => vec![token.clone()],
-        _ => unimplemented!(),
+        s if is_syntax(&s)   => vec![token.clone()],
+        _ => unimplemented!("HELLO"),
     }
 }
 
@@ -91,9 +95,10 @@ mod regex_tests {
             assert_eq!(is_match, true, "Did not correctly match: {}", curr);
         }
 
-        // for curr in ["1", "10", "+", "_"].into_iter() {
-        //     let is_match
-        // }
+        for curr in ["1", "10", "+", "_"].into_iter() {
+            let is_match = process_token::VAR_TOKEN.is_match(curr);
+            assert_eq!(is_match, false, "Incorrectly matched: {}", curr);
+        }
     }
 
     #[test]
