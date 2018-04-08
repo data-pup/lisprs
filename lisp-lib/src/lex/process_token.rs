@@ -17,10 +17,15 @@ fn is_syntax(token: &String)   -> bool {
 /// Split a raw token into its syntactically meaningful components.
 pub fn process_raw_token(token: String) -> Vec<String> {
     match &token {
-        s if is_variable(&s) => vec![token.clone()],
-        s if is_value(&s)    => vec![token.clone()],
-        s if is_syntax(&s)   => vec![token.clone()],
-        _ => unimplemented!("HELLO"),
+        t if is_variable(&t)  // Return the token as is if it is a variable,
+          || is_value(&t)     // value token, or syntactivally relevant.
+          || is_syntax(&t) => vec![token.clone()],
+        t => { // Otherwise, process the components of the token.
+            // let mut split_indices: Vec<usize> = Vec::new();
+            // for (i, c) in t.char_indices() {
+
+            unimplemented!()
+        }
     }
 }
 
@@ -107,5 +112,11 @@ mod regex_tests {
             let is_match = process_token::VAL_TOKEN.is_match(curr);
             assert_eq!(is_match, true, "Did not correctly match: {}", curr);
         }
+    }
+
+    #[test]
+    fn matching_a_char() {
+        let c = '(';
+        assert!(process_token::PAREN_CHAR.is_match(&c.to_string()));
     }
 }
