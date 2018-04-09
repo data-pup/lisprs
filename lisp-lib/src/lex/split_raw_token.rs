@@ -109,23 +109,17 @@ mod raw_token_processing_tests {
 
     #[test]
     fn raw_tokens_containing_parens_should_be_split() {
-        let test_cases = &[
-            ("(+", vec![String::from("("), String::from("+")]),
-            ("((", vec![String::from("("), String::from("(")]),
-            ("(((", vec![
-                        String::from("("),
-                        String::from("("),
-                        String::from("(")
-                    ]
-            ),
-            ("(1)", vec![
-                        String::from("("),
-                            String::from("1"),
-                        String::from(")")
-                    ]
-            ),
-        ];
-        for &(input, ref expected) in test_cases.into_iter() {
+        let test_cases: Vec<(&str, Vec<String>)> = [
+            ("(+", vec!["(", "+"]),
+            ("((", vec!["(", "("]),
+            ("(((", vec!["(", "(", "("]),
+            ("(1)", vec!["(", "1", ")"]),
+        ].into_iter().map(|&(input, ref exp)|
+            (input, exp.iter()
+                       .map(|i| String::from(*i))
+                       .collect::<Vec<String>>())
+        ).collect();
+        for (input, expected) in test_cases.into_iter() {
             check_results(input, expected.clone());
         }
     }
