@@ -14,29 +14,29 @@ use lex::token_regex::{
 };
 
 /// Split a raw token into its syntactically meaningful components.
-pub fn process_raw_token(token: String) -> Vec<String> {
-    match &token {
-        t if is_variable_token(&t) || is_value_token(&t) => vec![token.clone()],
-        t => { // Otherwise, process the components of the token.
-            let mut tokens: Vec<String> = vec![];
-            let mut curr_token: Vec<char> = vec![];
-            for curr_c in t.chars() {
-                match curr_c {
-                    c if is_syntax_char(c) => {
-                        if !&curr_token.is_empty() {
-                            tokens.push(String::from_iter(curr_token));
-                            curr_token = vec![];
-                        }
-                        tokens.push(curr_c.to_string())
-                    },
-                    _ => curr_token.push(curr_c),
-                }
-            }
-            if !&curr_token.is_empty() { tokens.push(String::from_iter(curr_token)); }
-            return tokens;
-        }
-    }
-}
+// pub fn process_raw_token(token: String) -> Vec<String> {
+//     match &token {
+//         t if is_variable_token(&t) || is_value_token(&t) => vec![token.clone()],
+//         t => { // Otherwise, process the components of the token.
+//             let mut tokens: Vec<String> = vec![];
+//             let mut curr_token: Vec<char> = vec![];
+//             for curr_c in t.chars() {
+//                 match curr_c {
+//                     c if is_syntax_char(c) => {
+//                         if !&curr_token.is_empty() {
+//                             tokens.push(String::from_iter(curr_token));
+//                             curr_token = vec![];
+//                         }
+//                         tokens.push(curr_c.to_string())
+//                     },
+//                     _ => curr_token.push(curr_c),
+//                 }
+//             }
+//             if !&curr_token.is_empty() { tokens.push(String::from_iter(curr_token)); }
+//             return tokens;
+//         }
+//     }
+// }
 
 /// TEMP: This is a new implementation of the raw token processing that will
 /// return elements in the form of a LispToken, rather than a String.
@@ -89,74 +89,83 @@ pub fn split_paren_token(token: &str) -> Vec<String> {
 #[cfg(test)]
 mod raw_token_processing_tests {
     use lex::split_raw_token;
-
-    /// Helper function that, given an input string and a vector containing the
-    /// expected results of the process_raw_token function, checks output.
-    fn check_results(input: &'static str, expected: Vec<String>) {
-        let result = split_raw_token::process_raw_token(input.to_string());
-        assert_eq!(result, expected, "Incorrectly split: {}", input);
-    }
-
-    #[test]
-    fn basic_tokens_should_be_returned_identically() {
-        let test_cases = &["hello", "+", "(", "0", "10"].iter()
-            .map(|s| (*s, vec![s.to_string()]))
-            .collect::<Vec<(&'static str, Vec<String>)>>();
-        for &(input, ref expected) in test_cases.into_iter() {
-            check_results(input, expected.clone());
-        }
-    }
-
-    #[test]
-    fn raw_tokens_containing_parens_should_be_split() {
-        let test_cases: Vec<(&str, Vec<String>)> = [
-            ("(+", vec!["(", "+"]),
-            ("((", vec!["(", "("]),
-            ("(((", vec!["(", "(", "("]),
-            ("(1)", vec!["(", "1", ")"]),
-        ].into_iter().map(|&(input, ref exp)|
-            (input, exp.iter()
-                       .map(|i| String::from(*i))
-                       .collect::<Vec<String>>())
-        ).collect();
-        for (input, expected) in test_cases.into_iter() {
-            check_results(input, expected.clone());
-        }
-    }
-}
-
-#[cfg(test)]
-mod new_impl_tests {
-    use lex::split_raw_token;
     use lisp_token::{LispToken, OperatorToken};
 
     #[test]
-    fn simple_tokens_should_be_identified_properly() {
-        let test_cases = &[
-            ("+", vec![LispToken::Operator(OperatorToken::Add)]),
-            ("(", vec![LispToken::OpenExpression]),
-            (")", vec![LispToken::CloseExpression]),
-            ("10", vec![LispToken::Value(String::from("10"))]),
-            ("hello", vec![LispToken::Variable(String::from("hello"))]),
-        ];
-        for &(input_str, ref expected) in test_cases.into_iter() {
-            let output = split_raw_token::process_raw_token_new_impl(
-                input_str.to_string());
-            assert_eq!(output, *expected,
-                "Lisp Token Could Not Be Identified: {}", input_str);
+    fn check_results() {
+        // let result = split_raw_token::process_raw_token_new_impl(input.to_string());
+        // assert_eq!(result, expected, "Incorrectly split: {}", input);
+        for &TestCase { input, ref expected, desc } in get_test_cases().iter() {
+            let output = split_raw_token::process_raw_token_new_impl(input.to_string());
+            assert_eq!(output, *expected);
         }
+    }
+
+    struct TestCase {
+        input: &'static str,
+        expected: Vec<LispToken>,
+        desc: &'static str,
+    }
+
+    fn get_test_cases() -> Vec<TestCase> {
+        return vec![
+            // TestCase {
+            //     input:    "+",
+            //     expected: vec![LispToken::Operator(OperatorToken::Add)],
+            //     desc:     "operator token",
+            // },
+            TestCase {
+                input:    "10",
+                expected: vec![LispToken::Value(String::from("10"))],
+                desc:     "value token",
+            },
+            // TestCase {
+            //     input:    "hello",
+            //     expected: &[LispToken::Variable(String::from("hello"))],
+            //     desc:     "simple example variable name",
+            // },
+            // TestCase {
+            //     input:    "World",
+            //     expected: &[LispToken::Variable(String::from("hello"))],
+            //     desc:     "simple example variable name",
+            // },
+            // TestCase {
+            //     input: "(+",
+            //     expected: &[
+            //         LispToken::OpenExpression,
+            //         LispToken::Operator(OperatorToken::Add),
+            //     ],
+            //     desc: "open parentheses and operator",
+            // },
+            // TestCase {
+            //     input: "((",
+            //     expected: &[
+            //         LispToken::OpenExpression,
+            //         LispToken::OpenExpression,
+            //     ],
+            //     desc: "two open parentheses",
+            // },
+            // TestCase {
+            //     input: "(1)",
+            //     expected: &[
+            //         LispToken::OpenExpression,
+            //         LispToken::Value(String::from("1")),
+            //         LispToken::CloseExpression,
+            //     ],
+            //     desc: "enclosed value",
+            // },
+        ];
     }
 }
 
 #[cfg(test)]
-mod new_impl_helper_tests {
+mod split_parens_tests {
     use lex::split_raw_token;
-
     #[test]
     fn split_parens_works() {
         let test_cases = vec![
             ("(", vec![String::from("(")]),
-            // ("(+", vec![String::from("("), String::from("+")]),
+            ("(+", vec![String::from("("), String::from("+")]),
             ("+)", vec![String::from("+"), String::from(")")]),
             ("hello)", vec![String::from("hello"), String::from(")")]),
             ("(hello)", vec![String::from("("), String::from("hello"), String::from(")")]),
