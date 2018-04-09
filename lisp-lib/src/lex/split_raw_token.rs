@@ -37,7 +37,13 @@ pub fn process_raw_token(token: String) -> Vec<String> {
 }
 
 pub fn process_raw_token_new_impl(token: String) -> Vec<LispToken> {
-    unimplemented!();
+    match &token {
+        raw_var if is_variable_token(&token) => {
+            let var = LispToken::Variable(raw_var.clone());
+            vec![var]
+        },
+        _ => unimplemented!(),
+    }
 }
 
 #[cfg(test)]
@@ -95,7 +101,9 @@ mod new_impl_tests {
         let test_cases = &[
             ("+", vec![LispToken::Operator(OperatorToken::Add)]),
             ("(", vec![LispToken::OpenExpression]),
-            (")", vec![LispToken::OpenExpression]),
+            (")", vec![LispToken::CloseExpression]),
+            ("10", vec![LispToken::Value(String::from("10"))]),
+            ("hello", vec![LispToken::Variable(String::from("hello"))]),
         ];
         for &(input_str, ref expected) in test_cases.into_iter() {
             let output = split_raw_token::process_raw_token_new_impl(
