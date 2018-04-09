@@ -1,12 +1,10 @@
 use regex::Regex;
 
-lazy_static! {
-    static ref VAR_TOKEN:  Regex = Regex::new(r"^[A-Za-z]+$").unwrap();
-    static ref VAL_TOKEN:  Regex = Regex::new(r"^[0-9]+$").unwrap();
+macro_rules! lisp_regex { ($exp:expr) => { Regex::new($exp).unwrap() } }
 
-    static ref EXPR:   Regex = Regex::new(
-        r"([0-9]\b)+$")
-    .unwrap();
+lazy_static! {
+    static ref VAR_TOKEN:  Regex = lisp_regex!(r"^[A-Za-z]+$");
+    static ref VAL_TOKEN:  Regex = lisp_regex!(r"^[0-9]+$");
 }
 
 // Define strings that should form operators.
@@ -16,13 +14,13 @@ static OPS: [&str; 4] = [
 ];
 
 /// Returns true/false based on whether a token is a valid symbol.
-pub fn is_variable_token(token: &String) -> bool { VAR_TOKEN.is_match(token) }
+pub fn is_variable_token(token: &str) -> bool { VAR_TOKEN.is_match(token) }
 
 /// Returns true/false based on whether a token is a valid value.
-pub fn is_value_token(token: &String) -> bool { VAL_TOKEN.is_match(token) }
+pub fn is_value_token(token: &str) -> bool { VAL_TOKEN.is_match(token) }
 
 /// Returns true/false based on whether a token is an operation character.
-pub fn is_op_token(token: &String) -> bool { OPS.contains(&token.as_ref()) }
+pub fn is_op_token(token: &str) -> bool { OPS.contains(&token.as_ref()) }
 
 /// Returns true/false based on whether a token is a parenthetical.
 pub fn is_paren(c: char) -> bool { c == '(' || c == ')' }
@@ -84,12 +82,5 @@ mod token_regex_tests {
             let is_match = token_regex::is_value_token(&curr.to_string());
             assert_eq!(is_match, true, "Did not correctly match: {}", curr);
         }
-    }
-
-    #[test]
-    fn temp_expr_test() {
-        let i = "1 1 2 3";
-        let is_match = token_regex::EXPR.is_match(i);
-        assert!(is_match);
     }
 }
