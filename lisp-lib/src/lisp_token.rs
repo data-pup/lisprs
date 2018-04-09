@@ -1,11 +1,14 @@
-pub enum _LispToken {
+#[derive(Debug, PartialEq)]
+pub enum LispToken {
     OpenExpression,
-    Operator(_OperatorToken),
-    Token(String),
+    Operator(OperatorToken),
+    Variable(String),
+    Value(String),
     CloseExpression,
 }
 
-pub enum _OperatorToken {
+#[derive(Debug, PartialEq)]
+pub enum OperatorToken {
     Add,
     Subtract,
     Multiply,

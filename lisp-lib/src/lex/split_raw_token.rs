@@ -1,4 +1,10 @@
 use std::iter::FromIterator;
+
+use lisp_token::{
+    LispToken,
+    OperatorToken,
+};
+
 use lex::token_regex::{
     is_syntax_char,
     is_value_token,
@@ -28,6 +34,10 @@ pub fn process_raw_token(token: String) -> Vec<String> {
             return tokens;
         }
     }
+}
+
+pub fn process_raw_token_new_impl(token: String) -> Vec<LispToken> {
+    unimplemented!();
 }
 
 #[cfg(test)]
@@ -71,6 +81,27 @@ mod raw_token_processing_tests {
         ];
         for &(input, ref expected) in test_cases.into_iter() {
             check_results(input, expected.clone());
+        }
+    }
+}
+
+#[cfg(test)]
+mod new_impl_tests {
+    use lex::split_raw_token;
+    use lisp_token::{LispToken, OperatorToken};
+
+    #[test]
+    fn simple_tokens_should_be_identified_properly() {
+        let test_cases = &[
+            ("+", vec![LispToken::Operator(OperatorToken::Add)]),
+            ("(", vec![LispToken::OpenExpression]),
+            (")", vec![LispToken::OpenExpression]),
+        ];
+        for &(input_str, ref expected) in test_cases.into_iter() {
+            let output = split_raw_token::process_raw_token_new_impl(
+                input_str.to_string());
+            assert_eq!(output, *expected,
+                "Lisp Token Could Not Be Identified: {}", input_str);
         }
     }
 }
