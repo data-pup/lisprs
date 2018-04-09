@@ -1,11 +1,11 @@
-mod process_token;
+mod split_raw_token;
 mod token_regex;
 
 pub fn get_tokens(input: &str) -> Vec<String> {
     let raw_input = input.to_string();
     raw_input.split_whitespace()
         .map(str::to_string)
-        .flat_map(process_token::process_raw_token)
+        .flat_map(split_raw_token::process_raw_token)
         .collect::<Vec<String>>()
 }
 
