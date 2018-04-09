@@ -1,10 +1,3 @@
-enum _LispToken {
-    OpenExpression,
-    Operator,
-    Value,
-    CloseExpression,
-}
-
 enum _ParseError {
     EmptyExpression,
     MissingOpenParen,

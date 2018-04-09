@@ -8,15 +8,13 @@ use lex::token_regex::{
 /// Split a raw token into its syntactically meaningful components.
 pub fn process_raw_token(token: String) -> Vec<String> {
     match &token {
-        t if is_variable_token(&t)  // Return the token as is if it is a variable,
-          || is_value_token(&t)     // value token, or syntactivally relevant.
-          || is_syntax_char(&t) => vec![token.clone()],
+        t if is_variable_token(&t) || is_value_token(&t) => vec![token.clone()],
         t => { // Otherwise, process the components of the token.
             let mut tokens: Vec<String> = vec![];
             let mut curr_token: Vec<char> = vec![];
             for curr_c in t.chars() {
                 match curr_c {
-                    c if is_syntax_char(&c.to_string()) => {
+                    c if is_syntax_char(c) => {
                         if !&curr_token.is_empty() {
                             tokens.push(String::from_iter(curr_token));
                             curr_token = vec![];
