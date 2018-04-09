@@ -3,9 +3,17 @@ use regex::Regex;
 lazy_static! {
     static ref VAR_TOKEN:  Regex = Regex::new(r"^[A-Za-z]+$").unwrap();
     static ref VAL_TOKEN:  Regex = Regex::new(r"^[0-9]+$").unwrap();
+
+    static ref EXPR:   Regex = Regex::new(
+        r"([0-9]\b)+$")
+    .unwrap();
 }
 
-static OP_CHARS: [char; 4] = ['+', '-', '*', '/'];
+// Define strings that should form operators.
+static OPS: [&str; 4] = [
+    "+", "-", "*", "/",
+    // "=", "+=", "-=", "*=", "/=", // FIXUP: Add assignment operators.
+];
 
 /// Returns true/false based on whether a token is a valid symbol.
 pub fn is_variable_token(token: &String) -> bool { VAR_TOKEN.is_match(token) }
@@ -13,14 +21,14 @@ pub fn is_variable_token(token: &String) -> bool { VAR_TOKEN.is_match(token) }
 /// Returns true/false based on whether a token is a valid value.
 pub fn is_value_token(token: &String) -> bool { VAL_TOKEN.is_match(token) }
 
+/// Returns true/false based on whether a token is an operation character.
+pub fn is_op_token(token: &String) -> bool { OPS.contains(&token.as_ref()) }
+
 /// Returns true/false based on whether a token is a parenthetical.
 pub fn is_paren(c: char) -> bool { c == '(' || c == ')' }
 
-/// Returns true/false based on whether a token is an operation character.
-pub fn is_op_char(c: char) -> bool { OP_CHARS.contains(&c) }
-
 /// Returns true/false based on whether a char is syntactically relevant.
-pub fn is_syntax_char(c: char) -> bool { is_op_char(c) || is_paren(c) }
+pub fn is_syntax_char(c: char) -> bool { is_op_token(&c.to_string()) || is_paren(c) }
 
 #[cfg(test)]
 mod char_regex_tests {
@@ -41,13 +49,13 @@ mod char_regex_tests {
 
     #[test]
     fn regexes_should_match_operators() {
-        for curr in ['+', '-', '*', '/',].into_iter() {
-            let is_match = token_regex::is_op_char(*curr);
+        for curr in ["+", "-", "*", "/",].into_iter() {
+            let is_match = token_regex::is_op_token(&curr.to_string());
             assert_eq!(is_match, true, "Did not correctly match: {}", curr);
         }
 
-        for curr in ['!', ',', '.', '?'].into_iter() {
-            let is_match = token_regex::is_op_char(*curr);
+        for curr in ["!", ",", ".", "?"].into_iter() {
+            let is_match = token_regex::is_op_token(&curr.to_string());
             assert_eq!(is_match, false, "Incorrectly matched: {}", curr);
         }
     }
@@ -76,5 +84,12 @@ mod token_regex_tests {
             let is_match = token_regex::is_value_token(&curr.to_string());
             assert_eq!(is_match, true, "Did not correctly match: {}", curr);
         }
+    }
+
+    #[test]
+    fn temp_expr_test() {
+        let i = "1 1 2 3";
+        let is_match = token_regex::EXPR.is_match(i);
+        assert!(is_match);
     }
 }

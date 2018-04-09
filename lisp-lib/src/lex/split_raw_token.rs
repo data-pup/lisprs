@@ -42,6 +42,10 @@ pub fn process_raw_token_new_impl(token: String) -> Vec<LispToken> {
             let var = LispToken::Variable(raw_var.clone());
             vec![var]
         },
+        raw_val if is_value_token(&token) => {
+            let val = LispToken::Value(raw_val.clone());
+            vec![val]
+        },
         _ => unimplemented!(),
     }
 }
