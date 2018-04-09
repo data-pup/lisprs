@@ -2,44 +2,19 @@ use std::iter::FromIterator;
 
 use lisp_token::{
     LispToken,
-    // OperatorToken,
+    OperatorToken,
 };
 
 use lex::token_regex::{
     is_op_token,
     is_paren,
-    is_syntax_char,
     is_value_token,
     is_variable_token,
 };
 
-/// Split a raw token into its syntactically meaningful components.
-// pub fn process_raw_token(token: String) -> Vec<String> {
-//     match &token {
-//         t if is_variable_token(&t) || is_value_token(&t) => vec![token.clone()],
-//         t => { // Otherwise, process the components of the token.
-//             let mut tokens: Vec<String> = vec![];
-//             let mut curr_token: Vec<char> = vec![];
-//             for curr_c in t.chars() {
-//                 match curr_c {
-//                     c if is_syntax_char(c) => {
-//                         if !&curr_token.is_empty() {
-//                             tokens.push(String::from_iter(curr_token));
-//                             curr_token = vec![];
-//                         }
-//                         tokens.push(curr_c.to_string())
-//                     },
-//                     _ => curr_token.push(curr_c),
-//                 }
-//             }
-//             if !&curr_token.is_empty() { tokens.push(String::from_iter(curr_token)); }
-//             return tokens;
-//         }
-//     }
-// }
-
 /// TEMP: This is a new implementation of the raw token processing that will
 /// return elements in the form of a LispToken, rather than a String.
+/// RENAME ONCE COMPLETE.
 pub fn process_raw_token_new_impl(token: String) -> Vec<LispToken> {
     match &token {
         raw_var if is_variable_token(&token) => {
@@ -51,7 +26,8 @@ pub fn process_raw_token_new_impl(token: String) -> Vec<LispToken> {
             vec![val]
         },
         raw_op if is_op_token(&token) => {
-            unimplemented!("Operators not implemented yet!");
+            let op = process_op_token(&token).unwrap();
+            vec![op]
         },
         paren_token => {
             split_paren_token(paren_token)
@@ -59,6 +35,16 @@ pub fn process_raw_token_new_impl(token: String) -> Vec<LispToken> {
                 .flat_map(process_raw_token_new_impl)
                 .collect()
         }
+    }
+}
+
+fn process_op_token(token: &str) -> Option<LispToken> {
+    match token {
+        "+" => Some(LispToken::Operator(OperatorToken::Add)),
+        "-" => Some(LispToken::Operator(OperatorToken::Subtract)),
+        "*" => Some(LispToken::Operator(OperatorToken::Multiply)),
+        "/" => Some(LispToken::Operator(OperatorToken::Divide)),
+        _ => None,
     }
 }
 
@@ -109,6 +95,11 @@ mod raw_token_processing_tests {
 
     fn get_test_cases() -> Vec<TestCase> {
         return vec![
+            TestCase {
+                input:    "(",
+                expected: vec![LispToken::OpenExpression],
+                desc:     "operator token",
+            },
             // TestCase {
             //     input:    "+",
             //     expected: vec![LispToken::Operator(OperatorToken::Add)],
@@ -174,5 +165,33 @@ mod split_parens_tests {
             let output = split_raw_token::split_paren_token(input);
             assert_eq!(output, expected, "Test Failed: {}", input);
         }
+    }
+}
+
+#[cfg(test)]
+mod op_processing_tests {
+    use lex::split_raw_token;
+    use lisp_token::{LispToken, OperatorToken};
+    #[test]
+    fn op_processing_works() {
+        let add_token = String::from("+"); // Check that "+" works.
+        let add_op = split_raw_token::process_op_token(&add_token).unwrap();
+        assert_eq!(add_op, LispToken::Operator(OperatorToken::Add), "Failed + test.");
+
+        let sub_token = String::from("-"); // Check that "-" works.
+        let sub_op = split_raw_token::process_op_token(&sub_token).unwrap();
+        assert_eq!(sub_op, LispToken::Operator(OperatorToken::Subtract), "Failed - test.");
+
+        let mult_token = String::from("*"); // Check that "*" works.
+        let mult_op = split_raw_token::process_op_token(&mult_token).unwrap();
+        assert_eq!(mult_op, LispToken::Operator(OperatorToken::Multiply), "Failed * test.");
+
+        let div_token = String::from("/"); // Check that "/" works.
+        let div_op = split_raw_token::process_op_token(&div_token).unwrap();
+        assert_eq!(div_op, LispToken::Operator(OperatorToken::Divide), "Failed / test.");
+
+        let invalid_op_token = String::from("$");
+        let div_op = split_raw_token::process_op_token(&invalid_op_token);
+        assert!(div_op.is_none());
     }
 }
