@@ -14,8 +14,7 @@ use lex::token_regex::{
 
 /// TEMP: This is a new implementation of the raw token processing that will
 /// return elements in the form of a LispToken, rather than a String.
-/// RENAME ONCE COMPLETE.
-pub fn process_raw_token_new_impl(token: String) -> Vec<LispToken> {
+pub fn process_raw_lisp_token(token: String) -> Vec<LispToken> {
     match &token {
         raw_var if is_variable_token(&token) => {
             let var = LispToken::Variable(raw_var.clone());
@@ -29,12 +28,21 @@ pub fn process_raw_token_new_impl(token: String) -> Vec<LispToken> {
             let op = process_op_token(&token).unwrap();
             vec![op]
         },
-        paren_token => {
-            split_paren_token(paren_token)
+        compl_token if token.len() > 1 => {
+            split_paren_token(compl_token)
                 .into_iter()
-                .flat_map(process_raw_token_new_impl)
+                .flat_map(process_raw_lisp_token)
                 .collect()
-        }
+        },
+        paren_token if token.len() == 1 => {
+            let c: char = paren_token.chars().next().unwrap();
+            match c {
+                '(' => vec![LispToken::OpenExpression],
+                ')' => vec![LispToken::CloseExpression],
+                _ => panic!("Unexpected token!"),
+            }
+        },
+        _ => panic!("Unexpected empty raw token!")
     }
 }
 
@@ -48,7 +56,7 @@ fn process_op_token(token: &str) -> Option<LispToken> {
     }
 }
 
-pub fn split_paren_token(token: &str) -> Vec<String> {
+fn split_paren_token(token: &str) -> Vec<String> {
     let add_curr_if_exists =
         |curr: &mut Vec<char>, res: &mut Vec<String>| {
             if !curr.is_empty() {
@@ -79,10 +87,10 @@ mod raw_token_processing_tests {
 
     #[test]
     fn check_results() {
-        // let result = split_raw_token::process_raw_token_new_impl(input.to_string());
+        // let result = split_raw_token::process_raw_lisp_token(input.to_string());
         // assert_eq!(result, expected, "Incorrectly split: {}", input);
         for &TestCase { input, ref expected, desc } in get_test_cases().iter() {
-            let output = split_raw_token::process_raw_token_new_impl(input.to_string());
+            let output = split_raw_token::process_raw_lisp_token(input.to_string());
             assert_eq!(output, *expected);
         }
     }
@@ -100,51 +108,51 @@ mod raw_token_processing_tests {
                 expected: vec![LispToken::OpenExpression],
                 desc:     "operator token",
             },
-            // TestCase {
-            //     input:    "+",
-            //     expected: vec![LispToken::Operator(OperatorToken::Add)],
-            //     desc:     "operator token",
-            // },
+            TestCase {
+                input:    "+",
+                expected: vec![LispToken::Operator(OperatorToken::Add)],
+                desc:     "operator token",
+            },
             TestCase {
                 input:    "10",
                 expected: vec![LispToken::Value(String::from("10"))],
                 desc:     "value token",
             },
-            // TestCase {
-            //     input:    "hello",
-            //     expected: &[LispToken::Variable(String::from("hello"))],
-            //     desc:     "simple example variable name",
-            // },
-            // TestCase {
-            //     input:    "World",
-            //     expected: &[LispToken::Variable(String::from("hello"))],
-            //     desc:     "simple example variable name",
-            // },
-            // TestCase {
-            //     input: "(+",
-            //     expected: &[
-            //         LispToken::OpenExpression,
-            //         LispToken::Operator(OperatorToken::Add),
-            //     ],
-            //     desc: "open parentheses and operator",
-            // },
-            // TestCase {
-            //     input: "((",
-            //     expected: &[
-            //         LispToken::OpenExpression,
-            //         LispToken::OpenExpression,
-            //     ],
-            //     desc: "two open parentheses",
-            // },
-            // TestCase {
-            //     input: "(1)",
-            //     expected: &[
-            //         LispToken::OpenExpression,
-            //         LispToken::Value(String::from("1")),
-            //         LispToken::CloseExpression,
-            //     ],
-            //     desc: "enclosed value",
-            // },
+            TestCase {
+                input:    "hello",
+                expected: vec![LispToken::Variable(String::from("hello"))],
+                desc:     "simple example variable name",
+            },
+            TestCase {
+                input:    "World",
+                expected: vec![LispToken::Variable(String::from("World"))],
+                desc:     "simple example variable name",
+            },
+            TestCase {
+                input: "(+",
+                expected: vec![
+                    LispToken::OpenExpression,
+                    LispToken::Operator(OperatorToken::Add),
+                ],
+                desc: "open parentheses and operator",
+            },
+            TestCase {
+                input: "((",
+                expected: vec![
+                    LispToken::OpenExpression,
+                    LispToken::OpenExpression,
+                ],
+                desc: "two open parentheses",
+            },
+            TestCase {
+                input: "(1)",
+                expected: vec![
+                    LispToken::OpenExpression,
+                    LispToken::Value(String::from("1")),
+                    LispToken::CloseExpression,
+                ],
+                desc: "enclosed value",
+            },
         ];
     }
 }

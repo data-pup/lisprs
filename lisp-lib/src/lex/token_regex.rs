@@ -25,9 +25,6 @@ pub fn is_op_token(token: &str) -> bool { OPS.contains(&token.as_ref()) }
 /// Returns true/false based on whether a token is a parenthetical.
 pub fn is_paren(c: char) -> bool { c == '(' || c == ')' }
 
-/// Returns true/false based on whether a char is syntactically relevant.
-pub fn is_syntax_char(c: char) -> bool { is_op_token(&c.to_string()) || is_paren(c) }
-
 #[cfg(test)]
 mod char_regex_tests {
     use lex::token_regex;
