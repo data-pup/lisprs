@@ -12,8 +12,9 @@ use lex::token_regex::{
     is_variable_token,
 };
 
-/// TEMP: This is a new implementation of the raw token processing that will
-/// return elements in the form of a LispToken, rather than a String.
+/// Process a raw Lisp token, return a collection of the resulting LispToken
+/// objects. Note that this is a vector, because a raw token such as '(('
+/// represents a sequence of syntactically meaningful tokens.
 pub fn process_raw_lisp_token(token: String) -> Vec<LispToken> {
     match &token {
         raw_var if is_variable_token(&token) => {
