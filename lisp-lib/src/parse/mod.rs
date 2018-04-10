@@ -7,6 +7,7 @@ enum _ParseError {
     EmptyExpression,
     MissingOpenParen,
     UnexpectedParen,
+    MissingOperands,
 }
 
 // Parse a vector of tokens, evaluate the expression, and return the result.

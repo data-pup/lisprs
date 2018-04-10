@@ -40,7 +40,7 @@ impl TryFrom<Vec<LispToken>> for _LispAstNode {
             }
         }
 
-        if curr_depth != 1 { return Err(_ParseError::UnexpectedParen); }
+        if curr_depth != 0 { return Err(_ParseError::UnexpectedParen); }
 
         unimplemented!();
     }
@@ -53,10 +53,24 @@ mod parse_tests {
     use parse::_ParseError;
     use lisp_token::LispToken;
 
-    // #[test]
-    // fn empty_expr_returns_errs() {
-    //     assert!(true);
-    // }
+    #[test]
+    fn op_with_no_children_returns_error() {
+        let invalid_exprs = vec![
+            vec![
+                LispToken::OpenExpression,
+                LispToken::Value(String::from("+")),
+                LispToken::CloseExpression,
+            ],
+            vec![
+                LispToken::Value(String::from("+")),
+            ],
+        ];
+        for curr_expr in invalid_exprs.into_iter() {
+            let result = lisp_ast::_LispAstNode::try_from(curr_expr);
+            assert!(result.is_err());
+            assert_eq!(result.unwrap_err(), _ParseError::MissingOperands);
+        }
+    }
 
     #[test]
     fn invalid_parens_return_error() {
