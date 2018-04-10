@@ -8,6 +8,5 @@ mod parse;
 
 pub fn get_result(input: &str) -> String {
     let tokens = lex::get_tokens(input);
-    unimplemented!();
-    // parse::parse(tokens)
+    parse::parse(tokens)
 }
