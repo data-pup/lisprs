@@ -1,3 +1,5 @@
+mod lisp_ast;
+
 use lisp_token::LispToken;
 
 enum _ParseError {
@@ -6,12 +8,12 @@ enum _ParseError {
 }
 
 // Parse a vector of tokens, evaluate the expression, and return the result.
-pub fn parse(tokens: Vec<LispToken>) -> String {
+pub fn parse(_tokens: Vec<LispToken>) -> String {
     unimplemented!();
 }
 
 /// Evaluate an expression given as a vector of strings.
-fn evaluate(args: Vec<String>) -> String {
+fn _evaluate(_args: Vec<String>) -> String {
     unimplemented!();
 }
 
