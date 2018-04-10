@@ -128,10 +128,16 @@ mod parse_tests {
     #[test]
     fn empty_expressions_cause_error() {
         let invalid_exprs = vec![
-            vec![
+            vec![],
+            vec![LispToken::OpenExpression, LispToken::CloseExpression],
+            vec![ // (+ 1 ())
+                LispToken::OpenExpression,
+                LispToken::Operator(LispOperator::Add),
+                LispToken::Value(String::from("1")),
                 LispToken::OpenExpression,
                 LispToken::CloseExpression,
-            ]
+                LispToken::CloseExpression,
+            ],
         ];
         for curr_expr in invalid_exprs.into_iter() {
             let result = lisp_ast::_LispAstNode::try_from(curr_expr);
