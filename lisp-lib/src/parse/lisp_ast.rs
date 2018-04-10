@@ -17,43 +17,28 @@ impl TryFrom<Vec<LispToken>> for _LispAstNode {
         let mut curr_depth: u8 = 0;
         for curr_token in tokens.iter().rev() {
             match curr_token {
-                &LispToken::Operator(op) => {
-                    let new_node = _LispAstNode::create_op_node(op, curr_expr)?;
-                    curr_expr = vec![new_node];
-                },
-                &LispToken::Variable(ref var) => {
-                    let new_node = _LispAstNode {
-                        token: LispToken::Variable(var.clone()),
-                        children: None,
-                    };
-                    curr_expr.push(new_node);
-                },
-                &LispToken::Value(ref val_token) => {
-                    let new_node = _LispAstNode {
-                        token: LispToken::Value(val_token.clone()),
-                        children: None,
-                    };
-                    curr_expr.push(new_node);
-                },
-                &LispToken::OpenExpression if curr_depth == 0 => {
-                    return Err(_ParseError::UnexpectedParen);
-                },
-                &LispToken::OpenExpression => {
-                    curr_depth -= 1;
-                },
-                &LispToken::CloseExpression => {
-                    curr_depth += 1
-                },
+                &LispToken::Operator(op) =>
+                    curr_expr = vec![_LispAstNode::create_op_node(op, curr_expr)?],
+                &LispToken::Variable(ref var_token) =>
+                    curr_expr.push(_LispAstNode::create_var_node(var_token)),
+                &LispToken::Value(ref val_token) =>
+                    curr_expr.push(_LispAstNode::create_val_node(val_token)),
+                &LispToken::OpenExpression if curr_depth == 0 =>
+                    return Err(_ParseError::UnexpectedParen),
+                &LispToken::OpenExpression => curr_depth -= 1,
+                &LispToken::CloseExpression => curr_depth += 1,
             }
         }
 
         if curr_depth != 0 { return Err(_ParseError::UnexpectedParen); }
+        else if curr_expr.len() == 0 { return Err(_ParseError::EmptyExpression); }
         else if curr_expr.len() != 1 { return Err(_ParseError::InvalidSyntaxTree); }
         else { unimplemented!(); }
     }
 }
 
 impl _LispAstNode {
+    // Create an operator node. If args were given, return a parse error.
     fn create_op_node(op: LispOperator, args: Vec<_LispAstNode>)
         -> Result<_LispAstNode, _ParseError> {
         if args.is_empty() { return Err(_ParseError::MissingOperands); }
@@ -63,6 +48,22 @@ impl _LispAstNode {
                 children: Some(args),
             };
             Ok(new_node)
+        }
+    }
+
+    // Process a symbol token, return the new AST node.
+    fn create_var_node(var_token: &str) -> _LispAstNode {
+        _LispAstNode {
+            token: LispToken::Variable(var_token.to_string()),
+            children: None,
+        }
+    }
+
+    // Create a new value node, return the new AST node.
+    fn create_val_node(val_token: &str) -> _LispAstNode {
+        _LispAstNode {
+            token: LispToken::Value(val_token.to_string()),
+            children: None,
         }
     }
 }
@@ -121,6 +122,21 @@ mod parse_tests {
             let result = lisp_ast::_LispAstNode::try_from(curr_expr);
             assert!(result.is_err());
             assert_eq!(result.unwrap_err(), _ParseError::UnexpectedParen);
+        }
+    }
+
+    #[test]
+    fn empty_expressions_cause_error() {
+        let invalid_exprs = vec![
+            vec![
+                LispToken::OpenExpression,
+                LispToken::CloseExpression,
+            ]
+        ];
+        for curr_expr in invalid_exprs.into_iter() {
+            let result = lisp_ast::_LispAstNode::try_from(curr_expr);
+            assert!(result.is_err());
+            assert_eq!(result.unwrap_err(), _ParseError::EmptyExpression);
         }
     }
 }
