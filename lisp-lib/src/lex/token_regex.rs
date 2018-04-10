@@ -79,5 +79,10 @@ mod token_regex_tests {
             let is_match = token_regex::is_value_token(&curr.to_string());
             assert_eq!(is_match, true, "Did not correctly match: {}", curr);
         }
+
+        for curr in ["+", "variable", "("].into_iter() {
+            let is_match = token_regex::is_value_token(&curr.to_string());
+            assert_eq!(is_match, false, "Incorrectly matched: {}", curr);
+        }
     }
 }

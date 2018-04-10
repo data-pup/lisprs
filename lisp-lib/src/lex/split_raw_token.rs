@@ -26,7 +26,7 @@ pub fn process_raw_lisp_token(token: String) -> Vec<LispToken> {
             vec![val]
         },
         raw_op if is_op_token(&token) => {
-            let op = process_op_token(&token).unwrap();
+            let op = process_op_token(&raw_op).unwrap();
             vec![op]
         },
         compl_token if token.len() > 1 => {
