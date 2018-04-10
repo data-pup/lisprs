@@ -6,6 +6,7 @@ use lisp_token::LispToken;
 enum _ParseError {
     EmptyExpression,
     UnexpectedParen,
+    UnexpectedToken,
     MissingOperands,
     InvalidSyntaxTree,
 }

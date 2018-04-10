@@ -4,7 +4,7 @@ use lisp_operator::LispOperator;
 use lisp_token::LispToken;
 use parse::_ParseError;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 struct _LispAstNode {
     token: LispToken,
     children: Option<Vec<_LispAstNode>>,
@@ -45,6 +45,32 @@ impl _LispAstNode {
         let mut expr = vec![];
         while let Some(token) = token_stack.pop() { expr.push(token) }
         Ok(expr)
+    }
+
+
+    // Parse the tokens of a single expression.
+    fn parse_expr_tokens(expr: &mut Vec<LispToken>)
+        -> Result<_LispAstNode, _ParseError> {
+        if let Some(parent_node) = expr.pop() {
+            unimplemented!();
+        }
+        return Err(_ParseError::EmptyExpression);
+    }
+
+    /// Convert a collection of lisp tokens into a collection of child nodes.
+    fn parse_operand_tokens(operands: &[LispToken])
+        -> Result<Vec<_LispAstNode>, _ParseError> {
+        operands.iter()
+        .map(|node| {
+            match node {
+                &LispToken::Variable(ref var_token) =>
+                    Ok(_LispAstNode::create_var_node(var_token)),
+                &LispToken::Value(ref val_token) =>
+                    Ok(_LispAstNode::create_val_node(val_token)),
+                _ => return Err(_ParseError::UnexpectedToken),
+            }
+        })
+        .collect()
     }
 
     // Create an operator node. If args were given, return a parse error.
@@ -164,19 +190,39 @@ mod get_next_expr_tests {
     use lisp_operator::LispOperator;
 
     #[test]
-    fn unwrapped_expression_is_returned_unchanged() {
+    fn get_next_expr_handles_unwrapped_expr() {
         let mut input = vec![ // + 1 2
             LispToken::Operator(LispOperator::Add),
                 LispToken::Value(String::from("1")),
                 LispToken::Value(String::from("2")),
         ];
         let expected = vec![
-            LispToken::Operator(LispOperator::Add),
-                LispToken::Value(String::from("1")),
                 LispToken::Value(String::from("2")),
+                LispToken::Value(String::from("1")),
+            LispToken::Operator(LispOperator::Add),
         ];
         let output = lisp_ast::_LispAstNode::get_next_expr(&mut input);
         assert!(output.is_ok());
+        assert_eq!(output.unwrap(), expected);
+    }
+
+    #[test]
+    fn operand_tokens_are_parsed_correctly() {
+        let input = vec![
+            LispToken::Value(String::from("2")),
+            LispToken::Variable(String::from("variable")),
+        ];
+        let expected = vec![
+            lisp_ast::_LispAstNode {
+                token: LispToken::Value(String::from("2")),
+                children: None,
+            },
+            lisp_ast::_LispAstNode {
+                token: LispToken::Variable(String::from("variable")),
+                children: None,
+            },
+        ];
+        let output = lisp_ast::_LispAstNode::parse_operand_tokens(&input);
         assert_eq!(output.unwrap(), expected);
     }
 }
