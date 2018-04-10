@@ -41,22 +41,38 @@ impl TryFrom<Vec<LispToken>> for _LispAstNode {
 }
 
 #[cfg(test)]
-mod node_tests {
+mod parse_tests {
     use std::convert::TryFrom;
     use parse::lisp_ast;
     use parse::_ParseError;
     use lisp_token::LispToken;
 
+    // #[test]
+    // fn empty_expr_returns_errs() {
+    //     assert!(true);
+    // }
+
     #[test]
     fn invalid_parens_return_error() {
-        let input = vec![
-            LispToken::OpenExpression,
-            LispToken::OpenExpression,
-            LispToken::OpenExpression,
-            LispToken::CloseExpression,
+        let invalid_exprs = vec![
+            vec![LispToken::OpenExpression],
+            vec![LispToken::CloseExpression],
+            vec![LispToken::CloseExpression, LispToken::OpenExpression],
+            vec![
+                LispToken::OpenExpression,
+                LispToken::OpenExpression,
+                LispToken::CloseExpression,
+            ],
+            vec![
+                LispToken::OpenExpression,
+                LispToken::CloseExpression,
+                LispToken::CloseExpression,
+            ],
         ];
-        let result = lisp_ast::_LispAstNode::try_from(input);
-        assert!(result.is_err());
-        assert_eq!(result.unwrap_err(), _ParseError::UnexpectedParen);
+        for curr_expr in invalid_exprs.into_iter() {
+            let result = lisp_ast::_LispAstNode::try_from(curr_expr);
+            assert!(result.is_err());
+            assert_eq!(result.unwrap_err(), _ParseError::UnexpectedParen);
+        }
     }
 }
