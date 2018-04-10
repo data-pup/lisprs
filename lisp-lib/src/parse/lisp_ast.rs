@@ -13,27 +13,27 @@ struct _LispAstNode {
 impl TryFrom<Vec<LispToken>> for _LispAstNode {
     type Error = _ParseError;
     fn try_from(tokens: Vec<LispToken>) -> Result<_LispAstNode, _ParseError> {
-        let mut child_nodes: Vec<_LispAstNode> = vec![];
+        let mut curr_expr: Vec<_LispAstNode> = vec![];
         let mut curr_depth: u8 = 0;
         for curr_token in tokens.iter().rev() {
             match curr_token {
                 &LispToken::Operator(op) => {
-                    let new_node = _LispAstNode::create_op_node(op, child_nodes)?;
-                    child_nodes = vec![new_node];
+                    let new_node = _LispAstNode::create_op_node(op, curr_expr)?;
+                    curr_expr = vec![new_node];
                 },
                 &LispToken::Variable(ref var) => {
                     let new_node = _LispAstNode {
                         token: LispToken::Variable(var.clone()),
                         children: None,
                     };
-                    child_nodes.push(new_node);
+                    curr_expr.push(new_node);
                 },
                 &LispToken::Value(ref val_token) => {
                     let new_node = _LispAstNode {
                         token: LispToken::Value(val_token.clone()),
                         children: None,
                     };
-                    child_nodes.push(new_node);
+                    curr_expr.push(new_node);
                 },
                 &LispToken::OpenExpression if curr_depth == 0 => {
                     return Err(_ParseError::UnexpectedParen);
@@ -48,7 +48,7 @@ impl TryFrom<Vec<LispToken>> for _LispAstNode {
         }
 
         if curr_depth != 0 { return Err(_ParseError::UnexpectedParen); }
-        else if child_nodes.len() != 1 { return Err(_ParseError::InvalidSyntaxTree); }
+        else if curr_expr.len() != 1 { return Err(_ParseError::InvalidSyntaxTree); }
         else { unimplemented!(); }
     }
 }
