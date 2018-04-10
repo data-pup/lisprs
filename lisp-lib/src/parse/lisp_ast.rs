@@ -1,4 +1,4 @@
-use lisp_operator::OperatorToken;
+use lisp_operator::LispOperator;
 
 #[derive(Debug, PartialEq)]
 struct _Atom { value: i64 }
@@ -8,14 +8,14 @@ impl _Atom {
 }
 
 struct _Expression {
-    op: OperatorToken,
+    op: LispOperator,
     vars: Vec<_Atom>,
 }
 
 impl _Expression {
     pub fn evaluate(&self) -> _Atom {
         match self.op {
-            OperatorToken::Add => {
+            LispOperator::Add => {
                 self.vars.iter().fold(_Atom::new(),
                     |res, acc| _Atom { value: res.value + acc.value }
                 )
@@ -28,12 +28,12 @@ impl _Expression {
 #[cfg(test)]
 mod evaluate_tests {
     use parse::lisp_ast::{_Atom, _Expression};
-    use lisp_operator::OperatorToken;
+    use lisp_operator::LispOperator;
 
     #[test]
     fn expression_evaluates_one_plus_two() {
         let expr = _Expression {
-            op: OperatorToken::Add,
+            op: LispOperator::Add,
             vars: vec![
                 _Atom { value: 1_i64 },
                 _Atom { value: 2_i64 },

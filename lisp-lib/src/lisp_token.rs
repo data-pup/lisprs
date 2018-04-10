@@ -1,9 +1,9 @@
-use lisp_operator::OperatorToken;
+use lisp_operator::LispOperator;
 
 #[derive(Debug, PartialEq)]
 pub enum LispToken {
     OpenExpression,
-    Operator(OperatorToken),
+    Operator(LispOperator),
     Variable(String),
     Value(String),
     CloseExpression,

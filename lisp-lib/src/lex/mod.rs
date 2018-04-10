@@ -14,7 +14,7 @@ pub fn get_tokens(input: &str) -> Vec<LispToken> {
 #[cfg(test)]
 mod lex_tests {
     use lex;
-    use lisp_operator::OperatorToken;
+    use lisp_operator::LispOperator;
     use lisp_token::LispToken;
 
     #[test]
@@ -23,7 +23,7 @@ mod lex_tests {
         let result = lex::get_tokens(input);
         let expected = vec![
             LispToken::OpenExpression,
-                LispToken::Operator(OperatorToken::Add),
+                LispToken::Operator(LispOperator::Add),
                     LispToken::Value(String::from("1")),
                     LispToken::Value(String::from("1")),
             LispToken::CloseExpression,
@@ -37,7 +37,7 @@ mod lex_tests {
         let result = lex::get_tokens(input);
         let expected = vec![
             LispToken::OpenExpression,
-                LispToken::Operator(OperatorToken::Add),
+                LispToken::Operator(LispOperator::Add),
                     LispToken::Value(String::from("1")),
                     LispToken::Value(String::from("1")),
             LispToken::CloseExpression,
@@ -51,9 +51,9 @@ mod lex_tests {
         let result = lex::get_tokens(input);
         let expected: Vec<LispToken> = vec![
             LispToken::OpenExpression,
-                LispToken::Operator(OperatorToken::Add),
+                LispToken::Operator(LispOperator::Add),
                     LispToken::OpenExpression,
-                        LispToken::Operator(OperatorToken::Multiply),
+                        LispToken::Operator(LispOperator::Multiply),
                         LispToken::Value(String::from("1")),
                         LispToken::Value(String::from("2")),
                     LispToken::CloseExpression,

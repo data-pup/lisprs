@@ -1,6 +1,6 @@
 use std::iter::FromIterator;
 
-use lisp_operator::OperatorToken;
+use lisp_operator::LispOperator;
 use lisp_token::LispToken;
 
 use lex::token_regex::{
@@ -47,10 +47,10 @@ pub fn process_raw_lisp_token(token: String) -> Vec<LispToken> {
 
 fn process_op_token(token: &str) -> Option<LispToken> {
     match token {
-        "+" => Some(LispToken::Operator(OperatorToken::Add)),
-        "-" => Some(LispToken::Operator(OperatorToken::Subtract)),
-        "*" => Some(LispToken::Operator(OperatorToken::Multiply)),
-        "/" => Some(LispToken::Operator(OperatorToken::Divide)),
+        "+" => Some(LispToken::Operator(LispOperator::Add)),
+        "-" => Some(LispToken::Operator(LispOperator::Subtract)),
+        "*" => Some(LispToken::Operator(LispOperator::Multiply)),
+        "/" => Some(LispToken::Operator(LispOperator::Divide)),
         _ => None,
     }
 }
@@ -82,7 +82,7 @@ fn split_paren_token(token: &str) -> Vec<String> {
 #[cfg(test)]
 mod raw_token_processing_tests {
     use lex::split_raw_token;
-    use lisp_operator::OperatorToken;
+    use lisp_operator::LispOperator;
     use lisp_token::LispToken;
 
     #[test]
@@ -110,7 +110,7 @@ mod raw_token_processing_tests {
             },
             TestCase {
                 input:    "+",
-                expected: vec![LispToken::Operator(OperatorToken::Add)],
+                expected: vec![LispToken::Operator(LispOperator::Add)],
                 desc:     "operator token",
             },
             TestCase {
@@ -132,7 +132,7 @@ mod raw_token_processing_tests {
                 input: "(+",
                 expected: vec![
                     LispToken::OpenExpression,
-                    LispToken::Operator(OperatorToken::Add),
+                    LispToken::Operator(LispOperator::Add),
                 ],
                 desc: "open parentheses and operator",
             },
@@ -179,25 +179,25 @@ mod split_parens_tests {
 #[cfg(test)]
 mod op_processing_tests {
     use lex::split_raw_token;
-    use lisp_operator::OperatorToken;
+    use lisp_operator::LispOperator;
     use lisp_token::LispToken;
     #[test]
     fn op_processing_works() {
         let add_token = String::from("+"); // Check that "+" works.
         let add_op = split_raw_token::process_op_token(&add_token).unwrap();
-        assert_eq!(add_op, LispToken::Operator(OperatorToken::Add), "Failed + test.");
+        assert_eq!(add_op, LispToken::Operator(LispOperator::Add), "Failed + test.");
 
         let sub_token = String::from("-"); // Check that "-" works.
         let sub_op = split_raw_token::process_op_token(&sub_token).unwrap();
-        assert_eq!(sub_op, LispToken::Operator(OperatorToken::Subtract), "Failed - test.");
+        assert_eq!(sub_op, LispToken::Operator(LispOperator::Subtract), "Failed - test.");
 
         let mult_token = String::from("*"); // Check that "*" works.
         let mult_op = split_raw_token::process_op_token(&mult_token).unwrap();
-        assert_eq!(mult_op, LispToken::Operator(OperatorToken::Multiply), "Failed * test.");
+        assert_eq!(mult_op, LispToken::Operator(LispOperator::Multiply), "Failed * test.");
 
         let div_token = String::from("/"); // Check that "/" works.
         let div_op = split_raw_token::process_op_token(&div_token).unwrap();
-        assert_eq!(div_op, LispToken::Operator(OperatorToken::Divide), "Failed / test.");
+        assert_eq!(div_op, LispToken::Operator(LispOperator::Divide), "Failed / test.");
 
         let invalid_op_token = String::from("$");
         let div_op = split_raw_token::process_op_token(&invalid_op_token);
