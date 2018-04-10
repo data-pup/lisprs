@@ -14,13 +14,19 @@ struct _LispAstNode {
 impl TryFrom<Vec<LispToken>> for _LispAstNode {
     type Error = _ParseError;
     fn try_from(tokens: Vec<LispToken>) -> Result<_LispAstNode, _ParseError> {
-        let mut child_nodes: Vec<LispToken> = vec![];
+        let mut child_nodes: Vec<_LispAstNode> = vec![];
         let mut curr_depth: u8 = 0;
         for curr_token in tokens.iter().rev() {
             match curr_token {
                 // Operator(LispOperator) => _li,
                 // Variable(String),
-                // Value(String),
+                &LispToken::Value(ref val_token) => {
+                    let new_node = _LispAstNode {
+                        token: LispToken::Value(val_token.clone()),
+                        children: None,
+                    };
+                    child_nodes.push(new_node);
+                }
                 &LispToken::OpenExpression if curr_depth == 0 => {
                     return Err(_ParseError::UnexpectedParen);
                 }
@@ -57,14 +63,20 @@ mod parse_tests {
         let invalid_exprs = vec![
             vec![LispToken::OpenExpression],
             vec![LispToken::CloseExpression],
-            vec![LispToken::CloseExpression, LispToken::OpenExpression],
+            vec![
+                LispToken::CloseExpression,
+                LispToken::Value(String::from("1")),
+                LispToken::OpenExpression
+            ],
             vec![
                 LispToken::OpenExpression,
                 LispToken::OpenExpression,
+                LispToken::Value(String::from("1")),
                 LispToken::CloseExpression,
             ],
             vec![
                 LispToken::OpenExpression,
+                LispToken::Value(String::from("1")),
                 LispToken::CloseExpression,
                 LispToken::CloseExpression,
             ],
