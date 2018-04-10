@@ -5,7 +5,6 @@ use lisp_token::LispToken;
 #[derive(Debug, PartialEq)]
 enum _ParseError {
     EmptyExpression,
-    MissingOpenParen,
     UnexpectedParen,
     MissingOperands,
     InvalidSyntaxTree,

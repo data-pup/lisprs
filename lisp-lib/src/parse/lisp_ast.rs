@@ -1,9 +1,8 @@
 use std::convert::TryFrom;
 
+use lisp_operator::LispOperator;
 use lisp_token::LispToken;
 use parse::_ParseError;
-
-type ChildList = Option<Box<Vec<_LispAstNode>>>;
 
 #[derive(Debug)]
 struct _LispAstNode {
@@ -19,15 +18,8 @@ impl TryFrom<Vec<LispToken>> for _LispAstNode {
         for curr_token in tokens.iter().rev() {
             match curr_token {
                 &LispToken::Operator(op) => {
-                    if child_nodes.is_empty() {
-                        return Err(_ParseError::MissingOperands);
-                    } else {
-                        let new_node = _LispAstNode {
-                            token: LispToken::Operator(op),
-                            children: Some(child_nodes),
-                        };
-                        child_nodes = vec![new_node];
-                    }
+                    let new_node = _LispAstNode::create_op_node(op, child_nodes)?;
+                    child_nodes = vec![new_node];
                 },
                 &LispToken::Variable(ref var) => {
                     let new_node = _LispAstNode {
@@ -52,13 +44,26 @@ impl TryFrom<Vec<LispToken>> for _LispAstNode {
                 &LispToken::CloseExpression => {
                     curr_depth += 1
                 },
-                _ => unimplemented!(),
             }
         }
 
         if curr_depth != 0 { return Err(_ParseError::UnexpectedParen); }
         else if child_nodes.len() != 1 { return Err(_ParseError::InvalidSyntaxTree); }
         else { unimplemented!(); }
+    }
+}
+
+impl _LispAstNode {
+    fn create_op_node(op: LispOperator, args: Vec<_LispAstNode>)
+        -> Result<_LispAstNode, _ParseError> {
+        if args.is_empty() { return Err(_ParseError::MissingOperands); }
+        else {
+            let new_node = _LispAstNode {
+                token: LispToken::Operator(op),
+                children: Some(args),
+            };
+            Ok(new_node)
+        }
     }
 }
 
