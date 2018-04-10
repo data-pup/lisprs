@@ -4,6 +4,7 @@ extern crate regex;
 
 mod lex;
 mod lisp_token;
+mod lisp_operator;
 mod parse;
 
 pub fn get_result(input: &str) -> String {

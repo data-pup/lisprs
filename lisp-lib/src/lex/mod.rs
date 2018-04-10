@@ -14,7 +14,8 @@ pub fn get_tokens(input: &str) -> Vec<LispToken> {
 #[cfg(test)]
 mod lex_tests {
     use lex;
-    use lisp_token::{LispToken, OperatorToken};
+    use lisp_operator::OperatorToken;
+    use lisp_token::LispToken;
 
     #[test]
     fn get_tokens_should_split_simple_expr_by_whitespace() {

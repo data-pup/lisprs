@@ -19,7 +19,7 @@ fn _evaluate(_args: Vec<String>) -> String {
 
 #[cfg(test)]
 mod parse_tests {
-    use parse;
+    // use parse;
 
     // #[test]
     // fn parse_handles_basic_expression() {

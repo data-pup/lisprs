@@ -1,3 +1,5 @@
+use lisp_operator::OperatorToken;
+
 #[derive(Debug, PartialEq)]
 pub enum LispToken {
     OpenExpression,
@@ -5,12 +7,4 @@ pub enum LispToken {
     Variable(String),
     Value(String),
     CloseExpression,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum OperatorToken {
-    Add,
-    Subtract,
-    Multiply,
-    Divide,
 }

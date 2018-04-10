@@ -1,4 +1,4 @@
-use lisp_token::OperatorToken;
+use lisp_operator::OperatorToken;
 
 #[derive(Debug, PartialEq)]
 struct _Atom { value: i64 }
@@ -28,7 +28,7 @@ impl _Expression {
 #[cfg(test)]
 mod evaluate_tests {
     use parse::lisp_ast::{_Atom, _Expression};
-    use lisp_token::OperatorToken;
+    use lisp_operator::OperatorToken;
 
     #[test]
     fn expression_evaluates_one_plus_two() {

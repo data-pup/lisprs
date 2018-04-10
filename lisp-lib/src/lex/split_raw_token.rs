@@ -1,9 +1,7 @@
 use std::iter::FromIterator;
 
-use lisp_token::{
-    LispToken,
-    OperatorToken,
-};
+use lisp_operator::OperatorToken;
+use lisp_token::LispToken;
 
 use lex::token_regex::{
     is_op_token,
@@ -84,7 +82,8 @@ fn split_paren_token(token: &str) -> Vec<String> {
 #[cfg(test)]
 mod raw_token_processing_tests {
     use lex::split_raw_token;
-    use lisp_token::{LispToken, OperatorToken};
+    use lisp_operator::OperatorToken;
+    use lisp_token::LispToken;
 
     #[test]
     fn check_results() {
@@ -92,7 +91,7 @@ mod raw_token_processing_tests {
         // assert_eq!(result, expected, "Incorrectly split: {}", input);
         for &TestCase { input, ref expected, desc } in get_test_cases().iter() {
             let output = split_raw_token::process_raw_lisp_token(input.to_string());
-            assert_eq!(output, *expected);
+            assert_eq!(output, *expected, "Failed Test: {}", desc);
         }
     }
 
@@ -180,7 +179,8 @@ mod split_parens_tests {
 #[cfg(test)]
 mod op_processing_tests {
     use lex::split_raw_token;
-    use lisp_token::{LispToken, OperatorToken};
+    use lisp_operator::OperatorToken;
+    use lisp_token::LispToken;
     #[test]
     fn op_processing_works() {
         let add_token = String::from("+"); // Check that "+" works.
