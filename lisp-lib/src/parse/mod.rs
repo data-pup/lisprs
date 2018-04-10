@@ -1,15 +1,12 @@
-mod lisp_ast;
-
 use lisp_token::LispToken;
 
-#[derive(Debug, PartialEq)]
-enum _ParseError {
-    EmptyExpression,
-    UnexpectedParen,
-    UnexpectedToken,
-    MissingOperands,
-    InvalidSyntaxTree,
-}
+mod lisp_ast;
+mod lisp_ast_from_tokens;
+mod parse_errors;
+mod pop_next_expr;
+
+pub use self::parse_errors::_ParseError;
+pub use self::lisp_ast::_LispAstNode;
 
 // Parse a vector of tokens, evaluate the expression, and return the result.
 pub fn parse(_tokens: Vec<LispToken>) -> String {
@@ -24,7 +21,6 @@ fn _evaluate(_args: Vec<String>) -> String {
 #[cfg(test)]
 mod parse_tests {
     // use parse;
-
     // #[test]
     // fn parse_handles_basic_expression() {
     //     let input = vec![
@@ -36,7 +32,6 @@ mod parse_tests {
     //     let expected = String::from("2");
     //     assert_eq!(result, expected);
     // }
-
     // #[test]
     // fn evaluate_handles_basic_expression() {
     //     let input = vec![String::from("+"), String::from("1"), String::from("1")];
