@@ -1,46 +1,62 @@
-use lisp_operator::LispOperator;
+use std::convert::TryFrom;
 
-#[derive(Debug, PartialEq)]
-struct _Atom { value: i64 }
+use lisp_token::LispToken;
+use parse::_ParseError;
 
-impl _Atom {
-    pub fn new() -> Self { Self { value: 0_i64 } }
+type ChildList = Option<Box<Vec<_LispAstNode>>>;
+
+#[derive(Debug)]
+struct _LispAstNode {
+    token: LispToken,
+    children: Option<Vec<_LispAstNode>>,
 }
 
-struct _Expression {
-    op: LispOperator,
-    vars: Vec<_Atom>,
-}
-
-impl _Expression {
-    pub fn evaluate(&self) -> _Atom {
-        match self.op {
-            LispOperator::Add => {
-                self.vars.iter().fold(_Atom::new(),
-                    |res, acc| _Atom { value: res.value + acc.value }
-                )
-            },
-            _ => unimplemented!(),
+impl TryFrom<Vec<LispToken>> for _LispAstNode {
+    type Error = _ParseError;
+    fn try_from(tokens: Vec<LispToken>) -> Result<_LispAstNode, _ParseError> {
+        let mut child_nodes: Vec<LispToken> = vec![];
+        let mut curr_depth: u8 = 0;
+        for curr_token in tokens.iter().rev() {
+            match curr_token {
+                // Operator(LispOperator) => _li,
+                // Variable(String),
+                // Value(String),
+                &LispToken::OpenExpression if curr_depth == 0 => {
+                    return Err(_ParseError::UnexpectedParen);
+                }
+                &LispToken::OpenExpression => {
+                    // let new_node = _LispAstNode{ token: curr_token, children: child_nodes };
+                    // child_nodes = vec![new_node];
+                    curr_depth -= 1;
+                }
+                &LispToken::CloseExpression => curr_depth += 1,
+                _ => unimplemented!(),
+            }
         }
+
+        if curr_depth != 1 { return Err(_ParseError::UnexpectedParen); }
+
+        unimplemented!();
     }
 }
 
 #[cfg(test)]
-mod evaluate_tests {
-    use parse::lisp_ast::{_Atom, _Expression};
-    use lisp_operator::LispOperator;
+mod node_tests {
+    use std::convert::TryFrom;
+    use parse::lisp_ast;
+    use parse::_ParseError;
+    use lisp_token::LispToken;
 
     #[test]
-    fn expression_evaluates_one_plus_two() {
-        let expr = _Expression {
-            op: LispOperator::Add,
-            vars: vec![
-                _Atom { value: 1_i64 },
-                _Atom { value: 2_i64 },
-            ],
-        };
-        let expected = _Atom { value: 3_i64 };
-        let result = expr.evaluate();
-        assert_eq!(result, expected);
+    fn invalid_parens_return_error() {
+        let input = vec![
+            LispToken::OpenExpression,
+            LispToken::OpenExpression,
+            LispToken::OpenExpression,
+            LispToken::CloseExpression,
+        ];
+        let result = lisp_ast::_LispAstNode::try_from(input);
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), _ParseError::UnexpectedParen);
     }
 }

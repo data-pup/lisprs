@@ -2,9 +2,11 @@ mod lisp_ast;
 
 use lisp_token::LispToken;
 
+#[derive(Debug, PartialEq)]
 enum _ParseError {
     EmptyExpression,
     MissingOpenParen,
+    UnexpectedParen,
 }
 
 // Parse a vector of tokens, evaluate the expression, and return the result.
