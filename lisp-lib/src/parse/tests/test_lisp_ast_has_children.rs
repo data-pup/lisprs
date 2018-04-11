@@ -27,6 +27,6 @@ mod test_lisp_ast_has_children {
                 },
             ]),
         };
-        assert_eq!(empty_children.has_children(), false);
+        assert_eq!(one_child.has_children(), true);
     }
 }
