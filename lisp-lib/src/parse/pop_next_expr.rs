@@ -15,6 +15,7 @@ impl _LispAstNode {
     /// empty, or if there is problem with the parentheses.
     fn get_next_expr(token_stack: &mut Vec<LispToken>)
         -> Result<Vec<LispToken>,_ParseError> {
+        let is_wrapped = _LispAstNode::is_wrapped_expr(&token_stack)?;
         let mut expr = vec![];
         while let Some(token) = token_stack.pop() { expr.push(token) }
         Ok(expr)
@@ -80,5 +81,21 @@ mod get_next_expr_tests {
         assert!(input.is_empty());
         assert!(output.is_ok());
         assert_eq!(output.unwrap(), expected);
+    }
+
+    #[test]
+    fn empty_token_stack_causes_error() {
+        let mut input = vec![];
+        let output = _LispAstNode::get_next_expr(&mut input);
+        assert!(output.is_err());
+        assert_eq!(output.unwrap_err(), _ParseError::EmptyExpression);
+    }
+
+    #[test]
+    fn trailing_open_paren_causes_error() {
+        let mut input = vec![LispToken::OpenExpression];
+        let output = _LispAstNode::get_next_expr(&mut input);
+        assert!(output.is_err());
+        assert_eq!(output.unwrap_err(), _ParseError::UnexpectedOpenParen);
     }
 }
