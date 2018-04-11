@@ -6,24 +6,51 @@ mod op_processing_tests {
 
     #[test]
     fn op_processing_works() {
-        let add_token = String::from("+"); // Check that "+" works.
-        let add_op = process_op_token(&add_token).unwrap();
-        assert_eq!(add_op, LispToken::Operator(LispOperator::Add), "Failed + test.");
-
-        let sub_token = String::from("-"); // Check that "-" works.
-        let sub_op = process_op_token(&sub_token).unwrap();
-        assert_eq!(sub_op, LispToken::Operator(LispOperator::Subtract), "Failed - test.");
-
-        let mult_token = String::from("*"); // Check that "*" works.
-        let mult_op = process_op_token(&mult_token).unwrap();
-        assert_eq!(mult_op, LispToken::Operator(LispOperator::Multiply), "Failed * test.");
-
-        let div_token = String::from("/"); // Check that "/" works.
-        let div_op = process_op_token(&div_token).unwrap();
-        assert_eq!(div_op, LispToken::Operator(LispOperator::Divide), "Failed / test.");
-
-        let invalid_op_token = String::from("$");
-        let div_op = process_op_token(&invalid_op_token);
-        assert!(div_op.is_none());
+        for test_case in TEST_CASES.iter() { run_test(test_case); }
     }
+
+    fn run_test(test_case: &TestCase) {
+        let &TestCase { input, ref expected, desc } = test_case;
+        let token = String::from(input);
+        let result = process_op_token(&token);
+        if expected.is_none() { assert!(result.is_none()) }
+        else {
+            let actual_token = result.unwrap();
+            let expected_token = expected.as_ref().unwrap();
+            assert_eq!(actual_token, *expected_token, "Failed Test: {}", desc);
+        }
+    }
+
+    struct TestCase {
+        input:    &'static str,
+        expected: Option<LispToken>,
+        desc:     &'static str,
+    }
+
+    static TEST_CASES: &[TestCase] = &[
+        TestCase {
+            input:    "+",
+            expected: Some(LispToken::Operator(LispOperator::Add)),
+            desc:     "Addition",
+        },
+        TestCase {
+            input:    "-",
+            expected: Some(LispToken::Operator(LispOperator::Subtract)),
+            desc:     "Subtraction",
+        },
+        TestCase {
+            input:    "*",
+            expected: Some(LispToken::Operator(LispOperator::Multiply)),
+            desc:     "Multiplication",
+        },
+        TestCase {
+            input:    "/",
+            expected: Some(LispToken::Operator(LispOperator::Divide)),
+            desc:     "Division",
+        },
+        TestCase { input: "1",     expected: None, desc: "Digit"  },
+        TestCase { input: "hello", expected: None, desc: "Symbol" },
+        TestCase { input: "!",     expected: None, desc: "Bang"   },
+        TestCase { input: ",",     expected: None, desc: "Comma"  },
+    ];
 }
