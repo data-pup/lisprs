@@ -10,6 +10,7 @@ impl TryFrom<Vec<LispToken>> for _LispAstNode {
     fn try_from(tokens: Vec<LispToken>) -> Result<_LispAstNode, _ParseError> {
         let mut curr_expr: Vec<_LispAstNode> = vec![];
         let mut curr_depth: u8 = 0;
+
         for curr_token in tokens.iter().rev() {
             match curr_token {
                 &LispToken::Operator(op) =>
@@ -33,22 +34,6 @@ impl TryFrom<Vec<LispToken>> for _LispAstNode {
 }
 
 impl _LispAstNode {
-    /// Convert a collection of lisp tokens into a collection of child nodes.
-    fn parse_operand_tokens(operands: &[LispToken])
-        -> Result<Vec<_LispAstNode>, _ParseError> {
-        operands.iter()
-        .map(|node| {
-            match node {
-                &LispToken::Variable(ref var_token) =>
-                    Ok(_LispAstNode::create_var_node(var_token)),
-                &LispToken::Value(ref val_token) =>
-                    Ok(_LispAstNode::create_val_node(val_token)),
-                _ => return Err(_ParseError::UnexpectedToken),
-            }
-        })
-        .collect()
-    }
-
     // Create an operator node. If args were given, return a parse error.
     fn create_op_node(op: LispOperator, args: Vec<_LispAstNode>)
         -> Result<_LispAstNode, _ParseError> {
