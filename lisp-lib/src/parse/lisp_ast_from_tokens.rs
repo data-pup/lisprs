@@ -69,7 +69,7 @@ impl _LispAstNode {
 #[cfg(test)]
 mod parse_tests {
     use std::convert::TryFrom;
-    use parse::lisp_ast;
+    use parse::lisp_ast::_LispAstNode;
     use parse::_ParseError;
     use lisp_token::LispToken;
     use lisp_operator::LispOperator;
@@ -87,7 +87,7 @@ mod parse_tests {
             ],
         ];
         for curr_expr in invalid_exprs.into_iter() {
-            let result = lisp_ast::_LispAstNode::try_from(curr_expr);
+            let result = _LispAstNode::try_from(curr_expr);
             assert!(result.is_err());
             assert_eq!(result.unwrap_err(), _ParseError::MissingOperands);
         }
@@ -117,7 +117,7 @@ mod parse_tests {
             ],
         ];
         for curr_expr in invalid_exprs.into_iter() {
-            let result = lisp_ast::_LispAstNode::try_from(curr_expr);
+            let result = _LispAstNode::try_from(curr_expr);
             assert!(result.is_err());
             assert_eq!(result.unwrap_err(), _ParseError::UnexpectedParen);
         }
@@ -138,7 +138,7 @@ mod parse_tests {
             ],
         ];
         for curr_expr in invalid_exprs.into_iter() {
-            let result = lisp_ast::_LispAstNode::try_from(curr_expr);
+            let result = _LispAstNode::try_from(curr_expr);
             assert!(result.is_err());
             assert_eq!(result.unwrap_err(), _ParseError::EmptyExpression);
         }

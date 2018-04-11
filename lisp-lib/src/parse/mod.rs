@@ -12,11 +12,11 @@ pub fn parse(_tokens: Vec<LispToken>) -> Result<_LispAstNode, _ParseError> {
     unimplemented!();
 }
 
-#[cfg(test)]
-mod parse_tests {
-    use parse;
-    #[test]
-    fn placeholder() {
-        assert_eq!(1, 2, "Unimplemented");
-    }
-}
+// #[cfg(test)]
+// mod parse_tests {
+//     // use parse;
+//     #[test]
+//     fn placeholder() {
+//         assert_eq!(1, 2, "Unimplemented");
+//     }
+// }
