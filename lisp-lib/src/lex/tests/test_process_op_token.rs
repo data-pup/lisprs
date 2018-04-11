@@ -15,7 +15,7 @@ mod op_processing_tests {
         let result = process_op_token(&token);
         if expected.is_none() { assert!(result.is_none()) }
         else {
-            let actual_token = result.unwrap();
+            let actual_token   = result.unwrap();
             let expected_token = expected.as_ref().unwrap();
             assert_eq!(actual_token, *expected_token, "Failed Test: {}", desc);
         }
