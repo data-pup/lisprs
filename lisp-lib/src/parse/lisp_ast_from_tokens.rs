@@ -21,6 +21,8 @@ impl TryFrom<Vec<LispToken>> for _LispAstNode {
                     curr_expr.push(_LispAstNode::create_val_node(val_token)),
                 &LispToken::OpenExpression if curr_depth == 0 =>
                     return Err(_ParseError::UnexpectedParen),
+                &LispToken::OpenExpression if curr_expr.is_empty() =>
+                    return Err(_ParseError::EmptyExpression),
                 &LispToken::OpenExpression => curr_depth -= 1,
                 &LispToken::CloseExpression => curr_depth += 1,
             }
@@ -140,25 +142,5 @@ mod parse_tests {
             assert!(result.is_err());
             assert_eq!(result.unwrap_err(), _ParseError::EmptyExpression);
         }
-    }
-
-    #[test]
-    fn operand_tokens_are_parsed_correctly() {
-        let input = vec![
-            LispToken::Value(String::from("2")),
-            LispToken::Variable(String::from("variable")),
-        ];
-        let expected = vec![
-            lisp_ast::_LispAstNode {
-                token: LispToken::Value(String::from("2")),
-                children: None,
-            },
-            lisp_ast::_LispAstNode {
-                token: LispToken::Variable(String::from("variable")),
-                children: None,
-            },
-        ];
-        let output = lisp_ast::_LispAstNode::parse_operand_tokens(&input);
-        assert_eq!(output.unwrap(), expected);
     }
 }
