@@ -77,12 +77,12 @@ mod parse_tests {
     #[test]
     fn op_with_no_children_returns_error() {
         let invalid_exprs = vec![
-            vec![
+            vec![ // ( + )
                 LispToken::OpenExpression,
                 LispToken::Operator(LispOperator::Add),
                 LispToken::CloseExpression,
             ],
-            vec![
+            vec![ // +
                 LispToken::Operator(LispOperator::Add),
             ],
         ];
@@ -96,20 +96,20 @@ mod parse_tests {
     #[test]
     fn invalid_parens_return_error() {
         let invalid_exprs = vec![
-            vec![LispToken::OpenExpression],
-            vec![LispToken::CloseExpression],
-            vec![
+            vec![LispToken::OpenExpression],   // (
+            vec![LispToken::CloseExpression],  // )
+            vec![                              // ) 1 (
                 LispToken::CloseExpression,
                 LispToken::Value(String::from("1")),
                 LispToken::OpenExpression
             ],
-            vec![
+            vec![                              // (( 1)
                 LispToken::OpenExpression,
                 LispToken::OpenExpression,
                 LispToken::Value(String::from("1")),
                 LispToken::CloseExpression,
             ],
-            vec![
+            vec![                              // ( 1 ))
                 LispToken::OpenExpression,
                 LispToken::Value(String::from("1")),
                 LispToken::CloseExpression,
