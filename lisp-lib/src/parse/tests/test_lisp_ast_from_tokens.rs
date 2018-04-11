@@ -4,7 +4,7 @@ mod lisp_ast_from_tokens_tests {
 
     use lisp_operator::LispOperator;
     use lisp_token::LispToken;
-    use parse::lisp_ast::_LispAstNode;
+    use parse::lisp_ast::LispAstNode;
     use parse::_ParseError;
 
     #[test]
@@ -20,7 +20,7 @@ mod lisp_ast_from_tokens_tests {
             ],
         ];
         for curr_expr in invalid_exprs.into_iter() {
-            let result = _LispAstNode::try_from(curr_expr);
+            let result = LispAstNode::try_from(curr_expr);
             assert!(result.is_err());
             assert_eq!(result.unwrap_err(), _ParseError::MissingOperands);
         }
@@ -50,7 +50,7 @@ mod lisp_ast_from_tokens_tests {
             ],
         ];
         for curr_expr in invalid_exprs.into_iter() {
-            let result = _LispAstNode::try_from(curr_expr);
+            let result = LispAstNode::try_from(curr_expr);
             assert!(result.is_err());
             assert_eq!(result.unwrap_err(), _ParseError::UnexpectedParen);
         }
@@ -71,7 +71,7 @@ mod lisp_ast_from_tokens_tests {
             ],
         ];
         for curr_expr in invalid_exprs.into_iter() {
-            let result = _LispAstNode::try_from(curr_expr);
+            let result = LispAstNode::try_from(curr_expr);
             assert!(result.is_err());
             assert_eq!(result.unwrap_err(), _ParseError::EmptyExpression);
         }

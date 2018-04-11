@@ -1,7 +1,7 @@
 use lisp_token::LispToken;
 
 #[derive(Debug, PartialEq)]
-pub struct _LispAstNode {
+pub struct LispAstNode {
     pub token: LispToken,
-    pub children: Option<Vec<_LispAstNode>>,
+    pub children: Option<Vec<LispAstNode>>,
 }

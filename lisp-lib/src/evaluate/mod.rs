@@ -1,4 +1,5 @@
-use parse::_LispAstNode;
-pub fn evaluate(_ast: _LispAstNode) -> String {
+use parse::LispAstNode;
+
+pub fn evaluate(ast: LispAstNode) -> String {
     unimplemented!();
 }
