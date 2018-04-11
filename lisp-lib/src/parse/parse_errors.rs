@@ -1,8 +1,11 @@
 #[derive(Debug, PartialEq)]
 pub enum _ParseError {
     EmptyExpression,
-    UnexpectedParen,
-    UnexpectedToken,
     MissingOperands,
     InvalidSyntaxTree,
+
+    // Parentheses related parse errors.
+    UnexpectedParen,
+    UnexpectedToken,
+    UnexpectedOpenParen,
 }
