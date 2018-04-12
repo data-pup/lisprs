@@ -1,42 +1,13 @@
 #[cfg(test)]
-mod evaluate_leaf_node_tests {
+mod valid_leaf_node_tests {
     use evaluate::evaluate_leaf_node::evaluate_leaf;
     use evaluate::EvalError;
     use lisp_token::LispToken;
     use parse::LispAstNode;
 
     #[test]
-    fn leaf_node_that_is_not_var_or_val_causes_error() {
-        unimplemented!();
-    }
-
-    struct ValueParseTestCase {
-        input: &'static str,
-        expected: Result<f64, EvalError>,
-        desc: &'static str,
-    }
-
-    static PARSE_TESTS: &[ValueParseTestCase] = &[
-        ValueParseTestCase {
-            input: "1", expected: Ok(1_f64), desc: "Parse 1",
-        },
-        ValueParseTestCase {
-            input: "100", expected: Ok(100_f64), desc: "Parse 100",
-        },
-        ValueParseTestCase {
-            input: "1.5", expected: Ok(1.5_f64), desc: "Parse 1.5",
-        },
-        ValueParseTestCase {
-            input: "-1", expected: Ok(-1_f64), desc: "Parse -1",
-        },
-        ValueParseTestCase {
-            input: "-0.005", expected: Ok(-0.005_f64), desc: "Parse -0.005",
-        },
-    ];
-
-    #[test]
     fn value_node_can_be_parsed_to_f64() {
-        for test_case in PARSE_TESTS.iter() {
+        for test_case in VALUE_PARSE_TESTS.iter() {
             let &ValueParseTestCase { input, ref expected, desc } = test_case;
             let node = LispAstNode {
                 token: LispToken::Value(String::from(input)),
@@ -54,5 +25,74 @@ mod evaluate_leaf_node_tests {
                 assert_eq!(actual_err, *expected_err, "Test Failed: {}", desc);
             }
         }
+    }
+
+    struct ValueParseTestCase {
+        input: &'static str,
+        expected: Result<f64, EvalError>,
+        desc: &'static str,
+    }
+
+    static VALUE_PARSE_TESTS: &[ValueParseTestCase] = &[
+        ValueParseTestCase { input: "1",      expected: Ok(1_f64),      desc: "Parse 1"      },
+        ValueParseTestCase { input: "100",    expected: Ok(100_f64),    desc: "Parse 100"    },
+        ValueParseTestCase { input: "1.5",    expected: Ok(1.5_f64),    desc: "Parse 1.5"    },
+        ValueParseTestCase { input: "-1",     expected: Ok(-1_f64),     desc: "Parse -1"     },
+        ValueParseTestCase { input: "-0.005", expected: Ok(-0.005_f64), desc: "Parse -0.005" },
+    ];
+}
+
+#[cfg(test)]
+mod invalid_leaf_node_tests {
+    use evaluate::evaluate_leaf_node::evaluate_leaf;
+    use evaluate::EvalError;
+    use lisp_token::LispToken;
+    use lisp_operator::LispOperator;
+    use parse::LispAstNode;
+
+    #[test]
+    fn invalid_leaf_nodes_cause_error() {
+        for test_case in init_test_cases().into_iter() {
+            let InvalidLeafTestCase { input, expected, desc } = test_case;
+            let result = evaluate_leaf(input);
+            assert!(result.is_err());
+            let actual_err = result.unwrap_err();
+            assert_eq!(actual_err, expected, "Test Failed: {}", desc);
+        }
+    }
+
+    fn init_test_cases() -> Vec<InvalidLeafTestCase> {
+        vec![
+            InvalidLeafTestCase {
+                input: LispAstNode {
+                    token: LispToken::CloseExpression,
+                    children: None,
+                },
+                expected: EvalError::InvalidLeafNode,
+                desc: "Closing parentheses cannot be leaf node.",
+            },
+            InvalidLeafTestCase {
+                input: LispAstNode {
+                    token: LispToken::OpenExpression,
+                    children: None,
+                },
+                expected: EvalError::InvalidLeafNode,
+                desc: "Opening parentheses cannot be leaf node.",
+            },
+            InvalidLeafTestCase {
+                input: LispAstNode {
+                    token: LispToken::Operator(LispOperator::Add),
+                    children: None,
+                },
+                expected: EvalError::InvalidLeafNode,
+                desc: "Operator cannot be leaf node.",
+            },
+        ]
+    }
+
+    struct InvalidLeafTestCase {
+        input: LispAstNode,
+        expected: EvalError,
+        desc: &'static str,
     }
 }
