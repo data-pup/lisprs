@@ -87,6 +87,14 @@ mod invalid_leaf_node_tests {
                 expected: EvalError::InvalidLeafNode,
                 desc: "Operator cannot be leaf node.",
             },
+            InvalidLeafTestCase {
+                input: LispAstNode {
+                    token: LispToken::Value(String::from("Not a value!")),
+                    children: None,
+                },
+                expected: EvalError::ValueParseError,
+                desc: "Operator cannot be leaf node.",
+            }
         ]
     }
 
