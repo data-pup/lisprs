@@ -10,13 +10,13 @@ use lisp_token::LispToken::Operator;
 use parse::LispAstNode;
 
 pub fn evaluate(ast: LispAstNode) -> String {
-    match evaluate_helper(ast) {
-        Ok(_) => unimplemented!(),
-        Err(_) => String::from("Error!"),
+    match get_ast_result(ast) {
+        Ok(res) => format!("{}", res),
+        Err(e) => format!("Error while processing: {:?}", e),
     }
 }
 
-fn evaluate_helper(ast: LispAstNode) -> Result<f64, EvalError> {
+fn get_ast_result(ast: LispAstNode) -> Result<f64, EvalError> {
     match ast.has_children() {
         true => evaluate_expr(ast),
         false => evaluate_leaf(ast),
@@ -28,7 +28,7 @@ fn evaluate_expr(node: LispAstNode) -> Result<f64, EvalError> {
         let operand_values: Vec<f64> =
             operands
             .into_iter()
-            .map(evaluate_helper)
+            .map(get_ast_result)
             .collect::<Result<Vec<f64>, EvalError>>()?;
         match node.token {
             Operator(op) => {

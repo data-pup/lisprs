@@ -28,10 +28,10 @@ impl TryFrom<Vec<LispToken>> for LispAstNode {
             }
         }
 
-        if curr_depth != 0 { return Err(_ParseError::UnexpectedParen); }
-        else if curr_expr.len() == 0 { return Err(_ParseError::EmptyExpression); }
-        else if curr_expr.len() != 1 { return Err(_ParseError::InvalidSyntaxTree); }
-        else { unimplemented!(); }
+        if curr_depth != 0           { Err(_ParseError::UnexpectedParen) }
+        else if curr_expr.len() == 0 { Err(_ParseError::EmptyExpression) }
+        else if curr_expr.len() != 1 { Err(_ParseError::InvalidSyntaxTree) }
+        else                         { Ok(curr_expr.pop().unwrap()) }
     }
 }
 
