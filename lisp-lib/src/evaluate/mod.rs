@@ -1,15 +1,12 @@
+mod eval_error;
+use self::eval_error::EvalError;
+
 use parse::LispAstNode;
 use lisp_token::LispToken::{
     // Operator,
     Variable,
     Value,
 };
-
-#[derive(Debug, PartialEq)]
-enum EvalError {
-    InvalidLeafNode,
-    ValueParseError,
-}
 
 pub fn evaluate(ast: LispAstNode) -> String {
     match evaluate_helper(ast) {
