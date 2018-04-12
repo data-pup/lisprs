@@ -6,7 +6,7 @@ use lisp_token::LispToken::{
 };
 
 #[derive(Debug, PartialEq)]
-enum EvaluateError {
+enum EvalError {
     InvalidLeafNode,
     ValueParseError,
 }
@@ -18,32 +18,32 @@ pub fn evaluate(ast: LispAstNode) -> String {
     }
 }
 
-fn evaluate_helper(ast: LispAstNode) -> Result<f64, EvaluateError> {
+fn evaluate_helper(ast: LispAstNode) -> Result<f64, EvalError> {
     match ast.has_children() {
         true => evaluate_expr(ast),
         false => evaluate_leaf_node(ast),
     }
 }
 
-fn evaluate_expr(_node: LispAstNode) -> Result<f64, EvaluateError> {
+fn evaluate_expr(_node: LispAstNode) -> Result<f64, EvalError> {
     unimplemented!();
 }
 
-fn evaluate_leaf_node(node: LispAstNode) -> Result<f64, EvaluateError> {
+fn evaluate_leaf_node(node: LispAstNode) -> Result<f64, EvalError> {
     match node.token {
         Variable(_) => unimplemented!(),
         Value(val_str) => {
             let val = val_str.parse::<f64>();
             if val.is_ok() { Ok(val.unwrap())                    }
-            else           { Err(EvaluateError::ValueParseError) }
+            else           { Err(EvalError::ValueParseError) }
         },
-        _ => Err(EvaluateError::InvalidLeafNode),
+        _ => Err(EvalError::InvalidLeafNode),
     }
 }
 
 #[cfg(test)]
 mod evaluate_leaf_node_tests {
-    use evaluate::{evaluate_leaf_node, EvaluateError};
+    use evaluate::{evaluate_leaf_node, EvalError};
     use lisp_token::LispToken;
     use parse::LispAstNode;
 
@@ -54,7 +54,7 @@ mod evaluate_leaf_node_tests {
 
     struct ValueParseTestCase {
         input: &'static str,
-        expected: Result<f64, EvaluateError>,
+        expected: Result<f64, EvalError>,
         desc: &'static str,
     }
 
