@@ -82,4 +82,71 @@ mod lisp_ast_from_tokens_tests {
             assert_eq!(result.unwrap_err(), _ParseError::EmptyExpression);
         }
     }
+
+    #[test]
+    fn simple_expression_parses_correctly() {
+        let input = vec![
+            LispToken::OpenExpression,
+            LispToken::Operator(LispOperator::Add),
+            LispToken::Value(String::from("1")),
+            LispToken::Value(String::from("2")),
+            LispToken::CloseExpression,
+        ];
+        let expected = LispAstNode {
+            token: LispToken::Operator(LispOperator::Add),
+            children: Some(vec![
+                LispAstNode {
+                    token: LispToken::Value(String::from("1")),
+                    children: None,
+                },
+                LispAstNode {
+                    token: LispToken::Value(String::from("2")),
+                    children: None,
+                },
+            ]),
+        };
+        let result = LispAstNode::try_from(input);
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), expected);
+    }
+
+    #[test]
+    fn nested_expression_parses_correctly() {
+        let input = vec![
+            LispToken::OpenExpression,
+            LispToken::Operator(LispOperator::Add),
+            LispToken::Value(String::from("1")),
+                LispToken::OpenExpression,
+                LispToken::Operator(LispOperator::Add),
+                LispToken::Value(String::from("2")),
+                LispToken::Value(String::from("3")),
+                LispToken::CloseExpression,
+            LispToken::CloseExpression,
+        ];
+        let expected = LispAstNode {
+            token: LispToken::Operator(LispOperator::Add),
+            children: Some(vec![
+                LispAstNode {
+                    token: LispToken::Value(String::from("1")),
+                    children: None,
+                },
+                LispAstNode {
+                    token: LispToken::Operator(LispOperator::Add),
+                    children: Some(vec![
+                        LispAstNode {
+                            token: LispToken::Value(String::from("2")),
+                            children: None,
+                        },
+                        LispAstNode {
+                            token: LispToken::Value(String::from("3")),
+                            children: None,
+                        },
+                    ]),
+                },
+            ]),
+        };
+        let result = LispAstNode::try_from(input);
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), expected);
+    }
 }

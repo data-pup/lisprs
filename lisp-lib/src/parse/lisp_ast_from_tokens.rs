@@ -14,7 +14,9 @@ impl TryFrom<Vec<LispToken>> for LispAstNode {
         for curr_token in tokens.iter().rev() {
             match curr_token {
                 &LispToken::Operator(op) => {
-                    curr_expr = vec![LispAstNode::create_op_node(op, curr_expr)?]
+                    let operands = curr_expr.into_iter().rev().collect::<Vec<LispAstNode>>();
+                    let op_node = LispAstNode::create_op_node(op, operands)?;
+                    curr_expr = vec![op_node];
                 }
                 &LispToken::Variable(ref var_token) => {
                     curr_expr.push(LispAstNode::create_var_node(var_token))
