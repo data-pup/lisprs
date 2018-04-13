@@ -6,8 +6,8 @@ extern crate regex;
 
 mod evaluate;
 mod lex;
-mod lisp_token;
 mod lisp_operator;
+mod lisp_token;
 mod parse;
 
 pub fn get_result(input: &str) -> String {

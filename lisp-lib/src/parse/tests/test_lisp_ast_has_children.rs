@@ -26,12 +26,10 @@ mod test_lisp_ast_has_children {
     fn node_with_children_returns_true() {
         let one_child = LispAstNode {
             token: LispToken::Operator(LispOperator::Add),
-            children: Some(vec![
-                LispAstNode {
-                    token: LispToken::Value(String::from("1")),
-                    children: None,
-                },
-            ]),
+            children: Some(vec![LispAstNode {
+                token: LispToken::Value(String::from("1")),
+                children: None,
+            }]),
         };
         assert_eq!(one_child.has_children(), true);
     }

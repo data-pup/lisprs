@@ -10,9 +10,9 @@ mod lex_tests {
         let result = lex::get_tokens(input);
         let expected = vec![
             LispToken::OpenExpression,
-                LispToken::Operator(LispOperator::Add),
-                    LispToken::Value(String::from("1")),
-                    LispToken::Value(String::from("1")),
+            LispToken::Operator(LispOperator::Add),
+            LispToken::Value(String::from("1")),
+            LispToken::Value(String::from("1")),
             LispToken::CloseExpression,
         ];
         assert_eq!(result, expected);
@@ -24,9 +24,9 @@ mod lex_tests {
         let result = lex::get_tokens(input);
         let expected = vec![
             LispToken::OpenExpression,
-                LispToken::Operator(LispOperator::Add),
-                    LispToken::Value(String::from("1")),
-                    LispToken::Value(String::from("1")),
+            LispToken::Operator(LispOperator::Add),
+            LispToken::Value(String::from("1")),
+            LispToken::Value(String::from("1")),
             LispToken::CloseExpression,
         ];
         assert_eq!(result, expected);
@@ -38,16 +38,16 @@ mod lex_tests {
         let result = lex::get_tokens(input);
         let expected: Vec<LispToken> = vec![
             LispToken::OpenExpression,
-                LispToken::Operator(LispOperator::Add),
-                    LispToken::OpenExpression,
-                        LispToken::Operator(LispOperator::Multiply),
-                        LispToken::Value(String::from("1")),
-                        LispToken::Value(String::from("2")),
-                    LispToken::CloseExpression,
-                    LispToken::Value(String::from("3")),
-                    LispToken::OpenExpression,
-                    LispToken::Value(String::from("4")),
-                    LispToken::CloseExpression,
+            LispToken::Operator(LispOperator::Add),
+            LispToken::OpenExpression,
+            LispToken::Operator(LispOperator::Multiply),
+            LispToken::Value(String::from("1")),
+            LispToken::Value(String::from("2")),
+            LispToken::CloseExpression,
+            LispToken::Value(String::from("3")),
+            LispToken::OpenExpression,
+            LispToken::Value(String::from("4")),
+            LispToken::CloseExpression,
             LispToken::CloseExpression,
         ];
         assert_eq!(result, expected);

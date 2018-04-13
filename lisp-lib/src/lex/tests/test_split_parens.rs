@@ -8,7 +8,10 @@ mod split_parens_tests {
             ("(+", vec![String::from("("), String::from("+")]),
             ("+)", vec![String::from("+"), String::from(")")]),
             ("hello)", vec![String::from("hello"), String::from(")")]),
-            ("(hello)", vec![String::from("("), String::from("hello"), String::from(")")]),
+            (
+                "(hello)",
+                vec![String::from("("), String::from("hello"), String::from(")")],
+            ),
         ];
         for (input, expected) in test_cases.into_iter() {
             let output = split_parens::split_paren_token(input);

@@ -6,51 +6,74 @@ mod op_processing_tests {
 
     #[test]
     fn op_processing_works() {
-        for test_case in TEST_CASES.iter() { run_test(test_case); }
+        for test_case in TEST_CASES.iter() {
+            run_test(test_case);
+        }
     }
 
     fn run_test(test_case: &TestCase) {
-        let &TestCase { input, ref expected, desc } = test_case;
+        let &TestCase {
+            input,
+            ref expected,
+            desc,
+        } = test_case;
         let token = String::from(input);
         let result = process_op_token(&token);
-        if expected.is_none() { assert!(result.is_none()) }
-        else {
-            let actual_token   = result.unwrap();
+        if expected.is_none() {
+            assert!(result.is_none())
+        } else {
+            let actual_token = result.unwrap();
             let expected_token = expected.as_ref().unwrap();
             assert_eq!(actual_token, *expected_token, "Failed Test: {}", desc);
         }
     }
 
     struct TestCase {
-        input:    &'static str,
+        input: &'static str,
         expected: Option<LispToken>,
-        desc:     &'static str,
+        desc: &'static str,
     }
 
     static TEST_CASES: &[TestCase] = &[
         TestCase {
-            input:    "+",
+            input: "+",
             expected: Some(LispToken::Operator(LispOperator::Add)),
-            desc:     "Addition",
+            desc: "Addition",
         },
         TestCase {
-            input:    "-",
+            input: "-",
             expected: Some(LispToken::Operator(LispOperator::Subtract)),
-            desc:     "Subtraction",
+            desc: "Subtraction",
         },
         TestCase {
-            input:    "*",
+            input: "*",
             expected: Some(LispToken::Operator(LispOperator::Multiply)),
-            desc:     "Multiplication",
+            desc: "Multiplication",
         },
         TestCase {
-            input:    "/",
+            input: "/",
             expected: Some(LispToken::Operator(LispOperator::Divide)),
-            desc:     "Division",
+            desc: "Division",
         },
-        TestCase { input: "1",     expected: None, desc: "Digit"  },
-        TestCase { input: "hello", expected: None, desc: "Symbol" },
-        TestCase { input: "!",     expected: None, desc: "Bang"   },
-        TestCase { input: ",",     expected: None, desc: "Comma"  },
+        TestCase {
+            input: "1",
+            expected: None,
+            desc: "Digit",
+        },
+        TestCase {
+            input: "hello",
+            expected: None,
+            desc: "Symbol",
+        },
+        TestCase {
+            input: "!",
+            expected: None,
+            desc: "Bang",
+        },
+        TestCase {
+            input: ",",
+            expected: None,
+            desc: "Comma",
+        },
     ];
 }

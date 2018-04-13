@@ -8,7 +8,12 @@ mod raw_token_processing_tests {
     fn check_results() {
         // let result = split_raw_token::process_raw_lisp_token(input.to_string());
         // assert_eq!(result, expected, "Incorrectly split: {}", input);
-        for &TestCase { input, ref expected, desc } in get_test_cases().iter() {
+        for &TestCase {
+            input,
+            ref expected,
+            desc,
+        } in get_test_cases().iter()
+        {
             let output = split_raw_token::process_raw_lisp_token(input.to_string());
             assert_eq!(output, *expected, "Failed Test: {}", desc);
         }
@@ -23,29 +28,29 @@ mod raw_token_processing_tests {
     fn get_test_cases() -> Vec<TestCase> {
         return vec![
             TestCase {
-                input:    "(",
+                input: "(",
                 expected: vec![LispToken::OpenExpression],
-                desc:     "operator token",
+                desc: "operator token",
             },
             TestCase {
-                input:    "+",
+                input: "+",
                 expected: vec![LispToken::Operator(LispOperator::Add)],
-                desc:     "operator token",
+                desc: "operator token",
             },
             TestCase {
-                input:    "10",
+                input: "10",
                 expected: vec![LispToken::Value(String::from("10"))],
-                desc:     "value token",
+                desc: "value token",
             },
             TestCase {
-                input:    "hello",
+                input: "hello",
                 expected: vec![LispToken::Variable(String::from("hello"))],
-                desc:     "simple example variable name",
+                desc: "simple example variable name",
             },
             TestCase {
-                input:    "World",
+                input: "World",
                 expected: vec![LispToken::Variable(String::from("World"))],
-                desc:     "simple example variable name",
+                desc: "simple example variable name",
             },
             TestCase {
                 input: "(+",
@@ -57,10 +62,7 @@ mod raw_token_processing_tests {
             },
             TestCase {
                 input: "((",
-                expected: vec![
-                    LispToken::OpenExpression,
-                    LispToken::OpenExpression,
-                ],
+                expected: vec![LispToken::OpenExpression, LispToken::OpenExpression],
                 desc: "two open parentheses",
             },
             TestCase {

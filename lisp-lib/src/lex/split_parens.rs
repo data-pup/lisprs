@@ -3,13 +3,12 @@ use std::iter::FromIterator;
 use lex::token_regex::is_paren;
 
 pub fn split_paren_token(token: &str) -> Vec<String> {
-    let add_curr_if_exists =
-        |curr: &mut Vec<char>, res: &mut Vec<String>| {
-            if !curr.is_empty() {
-                let new_token = String::from_iter(curr.clone());
-                res.push(new_token);
-                curr.clear();
-            }
+    let add_curr_if_exists = |curr: &mut Vec<char>, res: &mut Vec<String>| {
+        if !curr.is_empty() {
+            let new_token = String::from_iter(curr.clone());
+            res.push(new_token);
+            curr.clear();
+        }
     };
 
     let (mut curr, mut results) = (vec![], vec![]);

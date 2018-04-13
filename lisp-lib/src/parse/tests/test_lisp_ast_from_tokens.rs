@@ -4,18 +4,20 @@ mod lisp_ast_from_tokens_tests {
 
     use lisp_operator::LispOperator;
     use lisp_token::LispToken;
-    use parse::lisp_ast::LispAstNode;
     use parse::_ParseError;
+    use parse::lisp_ast::LispAstNode;
 
     #[test]
     fn op_with_no_children_returns_error() {
         let invalid_exprs = vec![
-            vec![ // ( + )
+            vec![
+                // ( + )
                 LispToken::OpenExpression,
                 LispToken::Operator(LispOperator::Add),
                 LispToken::CloseExpression,
             ],
-            vec![ // +
+            vec![
+                // +
                 LispToken::Operator(LispOperator::Add),
             ],
         ];
@@ -29,20 +31,23 @@ mod lisp_ast_from_tokens_tests {
     #[test]
     fn invalid_parens_return_error() {
         let invalid_exprs = vec![
-            vec![LispToken::OpenExpression],   // (
-            vec![LispToken::CloseExpression],  // )
-            vec![                              // ) 1 (
+            vec![LispToken::OpenExpression],  // (
+            vec![LispToken::CloseExpression], // )
+            vec![
+                // ) 1 (
                 LispToken::CloseExpression,
                 LispToken::Value(String::from("1")),
-                LispToken::OpenExpression
+                LispToken::OpenExpression,
             ],
-            vec![                              // (( 1)
+            vec![
+                // (( 1)
                 LispToken::OpenExpression,
                 LispToken::OpenExpression,
                 LispToken::Value(String::from("1")),
                 LispToken::CloseExpression,
             ],
-            vec![                              // ( 1 ))
+            vec![
+                // ( 1 ))
                 LispToken::OpenExpression,
                 LispToken::Value(String::from("1")),
                 LispToken::CloseExpression,
@@ -61,7 +66,8 @@ mod lisp_ast_from_tokens_tests {
         let invalid_exprs = vec![
             vec![],
             vec![LispToken::OpenExpression, LispToken::CloseExpression],
-            vec![ // (+ 1 ())
+            vec![
+                // (+ 1 ())
                 LispToken::OpenExpression,
                 LispToken::Operator(LispOperator::Add),
                 LispToken::Value(String::from("1")),

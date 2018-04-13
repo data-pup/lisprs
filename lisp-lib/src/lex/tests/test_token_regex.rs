@@ -17,7 +17,7 @@ mod char_regex_tests {
 
     #[test]
     fn regexes_should_match_operators() {
-        for curr in ["+", "-", "*", "/",].into_iter() {
+        for curr in ["+", "-", "*", "/"].into_iter() {
             let is_match = token_regex::is_op_token(&curr.to_string());
             assert_eq!(is_match, true, "Did not correctly match: {}", curr);
         }

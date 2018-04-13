@@ -1,7 +1,7 @@
-use std::convert::TryFrom;
 use lisp_operator::LispOperator;
 use lisp_token::LispToken;
 use parse::_ParseError;
+use std::convert::TryFrom;
 
 use parse::LispAstNode;
 
@@ -13,34 +13,47 @@ impl TryFrom<Vec<LispToken>> for LispAstNode {
 
         for curr_token in tokens.iter().rev() {
             match curr_token {
-                &LispToken::Operator(op) =>
-                    curr_expr = vec![LispAstNode::create_op_node(op, curr_expr)?],
-                &LispToken::Variable(ref var_token) =>
-                    curr_expr.push(LispAstNode::create_var_node(var_token)),
-                &LispToken::Value(ref val_token) =>
-                    curr_expr.push(LispAstNode::create_val_node(val_token)),
-                &LispToken::OpenExpression if curr_depth == 0 =>
-                    return Err(_ParseError::UnexpectedParen),
-                &LispToken::OpenExpression if curr_expr.is_empty() =>
-                    return Err(_ParseError::EmptyExpression),
+                &LispToken::Operator(op) => {
+                    curr_expr = vec![LispAstNode::create_op_node(op, curr_expr)?]
+                }
+                &LispToken::Variable(ref var_token) => {
+                    curr_expr.push(LispAstNode::create_var_node(var_token))
+                }
+                &LispToken::Value(ref val_token) => {
+                    curr_expr.push(LispAstNode::create_val_node(val_token))
+                }
+                &LispToken::OpenExpression if curr_depth == 0 => {
+                    return Err(_ParseError::UnexpectedParen)
+                }
+                &LispToken::OpenExpression if curr_expr.is_empty() => {
+                    return Err(_ParseError::EmptyExpression)
+                }
                 &LispToken::OpenExpression => curr_depth -= 1,
                 &LispToken::CloseExpression => curr_depth += 1,
             }
         }
 
-        if curr_depth != 0           { Err(_ParseError::UnexpectedParen) }
-        else if curr_expr.len() == 0 { Err(_ParseError::EmptyExpression) }
-        else if curr_expr.len() != 1 { Err(_ParseError::InvalidSyntaxTree) }
-        else                         { Ok(curr_expr.pop().unwrap()) }
+        if curr_depth != 0 {
+            Err(_ParseError::UnexpectedParen)
+        } else if curr_expr.len() == 0 {
+            Err(_ParseError::EmptyExpression)
+        } else if curr_expr.len() != 1 {
+            Err(_ParseError::InvalidSyntaxTree)
+        } else {
+            Ok(curr_expr.pop().unwrap())
+        }
     }
 }
 
 impl LispAstNode {
     // Create an operator node. If args were given, return a parse error.
-    fn create_op_node(op: LispOperator, args: Vec<LispAstNode>)
-        -> Result<LispAstNode, _ParseError> {
-        if args.is_empty() { return Err(_ParseError::MissingOperands); }
-        else {
+    fn create_op_node(
+        op: LispOperator,
+        args: Vec<LispAstNode>,
+    ) -> Result<LispAstNode, _ParseError> {
+        if args.is_empty() {
+            return Err(_ParseError::MissingOperands);
+        } else {
             let new_node = LispAstNode {
                 token: LispToken::Operator(op),
                 children: Some(args),
