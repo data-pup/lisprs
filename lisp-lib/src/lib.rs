@@ -14,6 +14,6 @@ pub fn get_result(input: &str) -> String {
     let tokens = lex::get_tokens(input);
     match parse::parse(tokens) {
         Ok(ast) => evaluate::evaluate(ast),
-        Err(e)  => return format!("Error while parsing: {:?}", e),
+        Err(e) => return format!("Error while parsing: {:?}", e),
     }
 }

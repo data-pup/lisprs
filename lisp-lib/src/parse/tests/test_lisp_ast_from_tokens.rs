@@ -116,11 +116,11 @@ mod lisp_ast_from_tokens_tests {
             LispToken::OpenExpression,
             LispToken::Operator(LispOperator::Add),
             LispToken::Value(String::from("1")),
-                LispToken::OpenExpression,
-                LispToken::Operator(LispOperator::Add),
-                LispToken::Value(String::from("2")),
-                LispToken::Value(String::from("3")),
-                LispToken::CloseExpression,
+            LispToken::OpenExpression,
+            LispToken::Operator(LispOperator::Add),
+            LispToken::Value(String::from("2")),
+            LispToken::Value(String::from("3")),
+            LispToken::CloseExpression,
             LispToken::CloseExpression,
         ];
         let expected = LispAstNode {
