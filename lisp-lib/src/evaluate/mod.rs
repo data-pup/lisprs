@@ -33,7 +33,7 @@ fn evaluate_expr(node: LispAstNode) -> Result<f64, EvalError> {
             Operator(op) => match op {
                 Add => Ok(operand_values.into_iter().fold(0_f64, |res, i| res + i)),
                 Subtract => unimplemented!(),
-                Multiply => unimplemented!(),
+                Multiply => Ok(operand_values.into_iter().fold(1_f64, |res, i| res * i)),
                 Divide => unimplemented!(),
             },
             _ => Err(EvalError::InvalidOp),
