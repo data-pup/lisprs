@@ -71,6 +71,6 @@ static NESTED_EXPR_INTEGER_ADDITION_TEST_CASES: &[TestCase] = &[
         input: "(+ (+ 1 1) 1 1)",
         expected: "4",
     },
-    // TestCase { input: "(+ (+ 1 ))", expected: "1", },
-    // TestCase { input: "(+ (+ (+ 1)))", expected: "3", },
+    TestCase { input: "(+ (+ 1 ))", expected: "1", },
+    TestCase { input: "(+ (+ (+ 1)))", expected: "1", },
 ];
