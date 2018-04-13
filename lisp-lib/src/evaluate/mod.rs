@@ -32,7 +32,17 @@ fn evaluate_expr(node: LispAstNode) -> Result<f64, EvalError> {
         match node.token {
             Operator(op) => match op {
                 Add => Ok(operand_values.into_iter().fold(0_f64, |res, i| res + i)),
-                Subtract => unimplemented!(),
+                Subtract => {
+                    if operand_values.len() == 1 {
+                        let a: f64 = operand_values.into_iter().next().unwrap();
+                        Ok(-a)
+                    } else {
+                        let mut operand_iter = operand_values.into_iter();
+                        let a: f64 = operand_iter.next().unwrap();
+                        let b: f64 = operand_iter.fold(0_f64, |res, i| res + i);
+                        Ok(a - b)
+                    }
+                }
                 Multiply => Ok(operand_values.into_iter().fold(1_f64, |res, i| res * i)),
                 Divide => unimplemented!(),
             },
