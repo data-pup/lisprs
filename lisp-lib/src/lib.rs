@@ -8,6 +8,8 @@ mod evaluate;
 mod lex;
 mod lisp_operator;
 mod lisp_token;
+mod lisp_value;
+mod lisp_variable;
 mod parse;
 
 pub fn get_result(input: &str) -> String {
