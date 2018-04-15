@@ -58,3 +58,12 @@ impl LispValue {
         }
     }
 }
+
+#[cfg(test)]
+mod lisp_value_parse_tests {
+    use lisp_value::*;
+    #[test]
+    fn ints_parse_correctly() {
+        assert_eq!(1, 2, "To Do!");
+    }
+}
