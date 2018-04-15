@@ -1,15 +1,15 @@
-use lisp_value::_LispValue;
+use lisp_value::LispValue;
 
 pub struct _LispVariable {
     pub id: String,
-    pub val: _LispValue,
+    pub val: LispValue,
 }
 
-impl _LispVariable {
-    pub fn new(id_s: &str, val_s: &str) -> Self {
-        unimplemented!();
-    }
-}
+// impl _LispVariable {
+//     pub fn new(id_s: &str, val_s: &str) -> Self {
+//         unimplemented!();
+//     }
+// }
 
 #[cfg(test)]
 mod lisp_variable_tests {
